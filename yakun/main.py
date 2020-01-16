@@ -56,7 +56,10 @@ class AudioRecorder:
                              rate=args.RATE,
                              input=True,
                              frames_per_buffer=args.CHUNK,
-                             stream_callback=self.callback)
+                             stream_callback=self.callback,
+                             start=False)
+        while not self.listener.start_flag:
+            True
         stream.start_stream()
         while stream.is_active():
             if self.listener.end_flag:
@@ -73,7 +76,7 @@ class AudioRecorder:
 
     def start_keyboard_listener(self):
         self.listener.start()
-        print("Press 'space bar' to start recording.")
+        print("Press 'Space Bar' to start recording.")
         print("Press 'Esc' to end recording.")
 
 
