@@ -1,23 +1,28 @@
-import wave
-from pynput import keyboard
-import pyaudio
 import argparse
+import queue
 import threading
+import wave
+import numpy as np
+
+import pyaudio
+from pynput import keyboard
+from data_preprocess import DataPreprocess
 
 # ===========================================
 #        Parse the argument
 # ===========================================
+
 parser = argparse.ArgumentParser()
 # setup pyaudio record configuration
 parser.add_argument('--CHUNK', default=1024, type=int)
 parser.add_argument('--SAMPLE_WIDTH', default=2, type=int)
 parser.add_argument('--CHANNELS', default=1, type=int)
 parser.add_argument('--RATE', default=16000, type=int)
-parser.add_argument('--RECORD_SECONDS', default=5, type=int)
+parser.add_argument('--RECORD_SECONDS', default=2, type=int)
 parser.add_argument('--FILENAME', default='output.wav', type=str)
 args = parser.parse_args()
 
-frames = []
+data_queue = queue.Queue()
 
 
 class MyListener(keyboard.Listener):
@@ -41,8 +46,10 @@ class MyListener(keyboard.Listener):
         return True
 
 
-class AudioRecorder:
+class AudioRecorder(threading.Thread):
     def __init__(self):
+        super().__init__()
+        global data_queue
         self.p = pyaudio.PyAudio()
         self.listener = MyListener()
         self.wf = wave.open(args.FILENAME, 'wb')
@@ -50,29 +57,34 @@ class AudioRecorder:
         self.wf.setsampwidth(args.SAMPLE_WIDTH)
         self.wf.setframerate(args.RATE)
 
+    def run(self):
+        self.start_keyboard_listener()
+        self.start_record()
+
     def start_record(self):
         stream = self.p.open(format=self.p.get_format_from_width(args.SAMPLE_WIDTH),
                              channels=args.CHANNELS,
                              rate=args.RATE,
                              input=True,
                              frames_per_buffer=args.CHUNK,
-                             stream_callback=self.callback,
                              start=False)
         while not self.listener.start_flag:
-            True
+            pass
         stream.start_stream()
+        frames = []
         while stream.is_active():
+            string_audio_data = stream.read(args.CHUNK)
+            frames.append(string_audio_data)
+            audio_data = np.fromstring(string_audio_data, dtype=np.int16)
+            data_queue.put(audio_data)
             if self.listener.end_flag:
                 stream.stop_stream()
                 self.wf.writeframes(b''.join(frames))
                 self.wf.close()
                 print('You should have a wav file in the current directory')
+
         stream.close()
         self.p.terminate()
-
-    def callback(self, in_data, frame_count, time_info, status):
-        frames.append(in_data)
-        return (in_data, pyaudio.paContinue)
 
     def start_keyboard_listener(self):
         self.listener.start()
@@ -82,6 +94,12 @@ class AudioRecorder:
 
 if __name__ == '__main__':
     recorder = AudioRecorder()
-    recorder.start_keyboard_listener()
-    recorder.start_record()
+    recorder.start()
+    while not recorder.listener.start_flag:
+        pass
+    num = int(args.RATE / args.CHUNK * args.RECORD_SECONDS)
+    data_preprocess = DataPreprocess(data_queue, num)
+    data_preprocess.setDaemon(True)
+    data_preprocess.start()
+    recorder.join()
     print('End.')
