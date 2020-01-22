@@ -6,7 +6,7 @@ import numpy as np
 
 import pyaudio
 from pynput import keyboard
-from data_preprocess import DataPreprocess
+from data_process import DataProcess
 
 # ===========================================
 #        Parse the argument
@@ -18,7 +18,7 @@ parser.add_argument('--CHUNK', default=1024, type=int)
 parser.add_argument('--SAMPLE_WIDTH', default=2, type=int)
 parser.add_argument('--CHANNELS', default=1, type=int)
 parser.add_argument('--RATE', default=16000, type=int)
-parser.add_argument('--RECORD_SECONDS', default=2, type=int)
+parser.add_argument('--RECORD_SECONDS', default=1, type=int)
 parser.add_argument('--FILENAME', default='output.wav', type=str)
 args = parser.parse_args()
 
@@ -47,18 +47,19 @@ class MyListener(keyboard.Listener):
 
 
 class AudioRecorder(threading.Thread):
-    def __init__(self):
+    def __init__(self, listener):
         super().__init__()
         global data_queue
         self.p = pyaudio.PyAudio()
-        self.listener = MyListener()
+        self.listener = listener
         self.wf = wave.open(args.FILENAME, 'wb')
         self.wf.setnchannels(args.CHANNELS)
         self.wf.setsampwidth(args.SAMPLE_WIDTH)
         self.wf.setframerate(args.RATE)
 
     def run(self):
-        self.start_keyboard_listener()
+        print("Press 'Space Bar' to start recording.")
+        print("Press 'Esc' to end recording.")
         self.start_record()
 
     def start_record(self):
@@ -75,7 +76,7 @@ class AudioRecorder(threading.Thread):
         while stream.is_active():
             string_audio_data = stream.read(args.CHUNK)
             frames.append(string_audio_data)
-            audio_data = np.fromstring(string_audio_data, dtype=np.int16)
+            audio_data = np.fromstring(string_audio_data, dtype=np.int16).astype('float32')
             data_queue.put(audio_data)
             if self.listener.end_flag:
                 stream.stop_stream()
@@ -86,20 +87,16 @@ class AudioRecorder(threading.Thread):
         stream.close()
         self.p.terminate()
 
-    def start_keyboard_listener(self):
-        self.listener.start()
-        print("Press 'Space Bar' to start recording.")
-        print("Press 'Esc' to end recording.")
-
 
 if __name__ == '__main__':
-    recorder = AudioRecorder()
+    keyboard_listener = MyListener()
+    keyboard_listener.start()
+
+    recorder = AudioRecorder(keyboard_listener)
     recorder.start()
-    while not recorder.listener.start_flag:
-        pass
-    num = int(args.RATE / args.CHUNK * args.RECORD_SECONDS)
-    data_preprocess = DataPreprocess(data_queue, num)
-    data_preprocess.setDaemon(True)
-    data_preprocess.start()
+
+    data_process = DataProcess(data_queue, args, keyboard_listener)
+    data_process.start()
+
     recorder.join()
     print('End.')
