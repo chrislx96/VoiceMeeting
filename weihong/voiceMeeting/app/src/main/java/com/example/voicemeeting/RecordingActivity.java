@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -34,6 +35,7 @@ public class RecordingActivity extends Activity {
     @SuppressLint("StaticFieldLeak")
     public static Context currentContext ;
     private ImageButton stopButton,recordButton;
+    private Button historyButton, resultButton;
 
     private TextView textMessage;
     private ListView listView;
@@ -54,9 +56,11 @@ public class RecordingActivity extends Activity {
     }
 
     private void binder(){
+        resultButton = findViewById(R.id.recording_btn_result);
         recordButton = findViewById(R.id.recording_btn_start);
         stopButton = findViewById(R.id.recording_btn_pause);
         MyBtnClicker myBtnClicker = new MyBtnClicker();
+        resultButton.setOnClickListener(myBtnClicker);
         recordButton.setOnClickListener(myBtnClicker);
         stopButton.setOnClickListener(myBtnClicker);
 
@@ -74,8 +78,16 @@ public class RecordingActivity extends Activity {
                     stopRecord();
 //                    uploadAudio(pathSave);
                     break;
+                case R.id.recording_btn_result:
+                    showresult();
+                    break;
             }
         }
+    }
+
+    private void showresult() {
+        Intent intent = new Intent(RecordingActivity.this, ResultActivity.class);
+        startActivity(intent);
     }
 
 
