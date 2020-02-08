@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegisterActivity">
+
+
+    <TextView
+        android:id="@+id/register_logo"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Register"
+        android:textColor="#fff"
+        android:textSize="@android:dimen/app_icon_size"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"/>
+
+    <EditText
+        android:layout_width="400dp"
+        android:layout_height="60dp"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/register_edit_name"
+        android:hint="Enter Your Username"
+        android:layout_below="@+id/register_logo"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="10dp"
+        android:drawableLeft="@drawable/account"/>
+
+    <EditText
+        android:layout_width="400dp"
+        android:layout_height="60dp"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/register_edit_pwd"
+        android:hint="Enter Your Password"
+        android:layout_below="@+id/register_edit_name"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:drawableLeft="@drawable/password"/>
+
+    <EditText
+        android:layout_width="400dp"
+        android:layout_height="60dp"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/register_edit_checkpwd"
+        android:hint="Enter Your Password Again"
+        android:layout_below="@+id/register_edit_pwd"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:drawableLeft="@drawable/password"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="register"
+        android:id="@+id/register_btn_register"
+        android:textColor="#ffffff"
+        android:background="#545bcb"
+        android:textSize="20dp"
+        android:layout_below="@+id/register_edit_checkpwd"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="50dp"/>
+
+
+
+
+
+
+</RelativeLayout>
