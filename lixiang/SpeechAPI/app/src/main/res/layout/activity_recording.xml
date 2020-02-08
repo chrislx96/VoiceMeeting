@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#e9e8e5"
-    tools:context="com.app.androidkt.speechapi.Recording">
+    tools:context="com.app.androidkt.speechapi.RecordingActivity">
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -39,17 +39,64 @@
                 tools:text="It is fine today." />
 
         </LinearLayout>
+
+
+
     </FrameLayout>
 
-    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/listview"
-        android:background="#fffde2"
-        android:layout_width="wrap_content"
-        android:layout_margin="8dp"
-        android:stackFromBottom="true"
-        android:transcriptMode="normal"
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <Button
+            android:id="@+id/recording_btn_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:text="Start"/>
+
+        <Button
+            android:id="@+id/recording_btn_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:text="Stop"/>
+
+        <Button
+            android:id="@+id/recording_btn_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:text="Result"/>
+
+        <Button
+            android:id="@+id/recording_btn_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:text="History"/>
+
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="383dp"
+        android:layout_height="500dp"
         android:layout_below="@+id/card"
-        />
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="#fffde2"
+        android:stackFromBottom="true"
+        android:transcriptMode="normal" />
 
 </RelativeLayout>
