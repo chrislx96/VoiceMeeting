@@ -82,10 +82,13 @@ public class RecordingActivity extends AppCompatActivity {
     }
 
     private void binder(){
+        historyButton = findViewById(R.id.recording_btn_history);
         resultButton = findViewById(R.id.recording_btn_result);
         recordButton = findViewById(R.id.recording_btn_start);
         stopButton = findViewById(R.id.recording_btn_pause);
         MyBtnClicker myBtnClicker = new MyBtnClicker();
+
+        historyButton.setOnClickListener(myBtnClicker);
         resultButton.setOnClickListener(myBtnClicker);
         recordButton.setOnClickListener(myBtnClicker);
         stopButton.setOnClickListener(myBtnClicker);
@@ -116,6 +119,9 @@ public class RecordingActivity extends AppCompatActivity {
                     break;
                 case R.id.recording_btn_result:
                     break;
+                case R.id.recording_btn_history:
+                    Intent intent = new Intent(RecordingActivity.this, HistoryActivity.class);
+                    startActivity(intent);
             }
         }
     }
