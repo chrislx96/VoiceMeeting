@@ -43,15 +43,10 @@ public class RecordingActivity extends AppCompatActivity {
     public static Context currentContext ;
     private Button stopButton,recordButton;
     private Button historyButton, resultButton;
-
     private EditText editText, editPort,editIp;
     ExecutorService exec = Executors.newCachedThreadPool();
     public static final int REQUEST_AUDIO_PERMISSION_CODE = 1;
     private String pathSave = null;
-    private static AudioRecorder recorder;
-    //    private SpeechAPI speechAPI;
-//    private VoiceRecorder mVoiceRecorder;
-
     public static final String TAG = "MainActivity";
 
     private static final int RECORD_REQUEST_CODE = 101;
@@ -126,19 +121,6 @@ public class RecordingActivity extends AppCompatActivity {
         }
     }
 
-    private void startRecord(){
-        System.out.println("1");
-//        if(CheckPermissions()) {
-        pathSave = getPath(System.currentTimeMillis()+ "audio.wav");
-        recorder = new AudioRecorder(pathSave);
-        recorder.startRecording();
-        System.out.println("2");
-        Toast.makeText(getApplicationContext(), "Recording Started", Toast.LENGTH_LONG).show();
-//        }
-//        else {
-//            RequestPermissions();
-//        }
-    }
 
     private String getPath(String nameOfFile) {
         FileOutputStream b = null;
@@ -152,14 +134,8 @@ public class RecordingActivity extends AppCompatActivity {
         return (Environment.getExternalStorageDirectory().getAbsolutePath() + "/SpkDiarization/");
     }
 
-    private void stopRecord(){
-        recorder.stopRecording();
-        Toast.makeText(getApplicationContext(), "Recording Stopped", Toast.LENGTH_LONG).show();
-    }
-
     private void uploadAudio(String path){
         try {
-//            TcpUploadClient client = new TcpUploadClient(editIp.getText().toString(),getPort(editPort.getText().toString()));
             TcpUploadClient client = new TcpUploadClient("10.13.120.182",7788);
             client.sendFile(path);
         }catch (Exception e) {
@@ -167,15 +143,6 @@ public class RecordingActivity extends AppCompatActivity {
         }
     }
 
-    public boolean CheckPermissions() {
-        int result = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
-        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
-        return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void RequestPermissions() {
-        ActivityCompat.requestPermissions(RecordingActivity.this, new String[]{RECORD_AUDIO, WRITE_EXTERNAL_STORAGE}, REQUEST_AUDIO_PERMISSION_CODE);
-    }
 
     private int getPort(String msg){
         if (msg.equals("")){
