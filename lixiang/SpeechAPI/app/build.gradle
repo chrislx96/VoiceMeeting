@@ -15,7 +15,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        multiDexEnabled  true
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -81,4 +81,6 @@ dependencies {
     }
 
     compile 'com.android.support:multidex:1.0.0'
+
+    compile 'com.github.qapqap:TimelineView:v1.6'
 }
