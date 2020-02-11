@@ -45,11 +45,9 @@ public class RecordingActivity extends AppCompatActivity {
                                     textMessage.setText(null);
                                     stringList.add(0,text);
                                     utterences.add(text);
-                                    System.out.println(text);
                                     adapter.notifyDataSetChanged();
                                 } else {
                                     textMessage.setText(text);
-                                    System.out.println(text);
                                 }
                             }
                         });
@@ -84,7 +82,7 @@ public class RecordingActivity extends AppCompatActivity {
 
     private float getTimeElapsed(){
         long currentTime = System.currentTimeMillis();
-        return (currentTime - start)/1000F;
+        return (float) (currentTime - start)/1000;
     }
 
     private class MyBtnClicker implements View.OnClickListener{
@@ -96,7 +94,7 @@ public class RecordingActivity extends AppCompatActivity {
                     start = startT;
                     utterences.clear();
                     startTime.clear();
-//                    listView.setAdapter(null);
+                    stringList.clear();
                     speechAPI = new SpeechAPI(RecordingActivity.this);
                     if (isGrantedPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
                         startVoiceRecorder();
@@ -108,7 +106,6 @@ public class RecordingActivity extends AppCompatActivity {
 
                 case R.id.recording_btn_pause:
                     stopVoiceRecorder();
-
                     // Stop Cloud Speech API
                     speechAPI.removeListener(mSpeechServiceListener);
                     speechAPI.destroy();
@@ -143,6 +140,7 @@ public class RecordingActivity extends AppCompatActivity {
         @Override
         public void onVoiceStart() {
             if (speechAPI != null) {
+                startTime.add(getTimeElapsed());
                 speechAPI.startRecognizing(mVoiceRecorder.getSampleRate());
             }
         }
@@ -192,6 +190,13 @@ public class RecordingActivity extends AppCompatActivity {
                 startVoiceRecorder();
             }
         }
+    }
+
+    public ArrayList<Float> getStartTime(){
+        return startTime;
+    }
+    public ArrayList<String> getUtterences(){
+        return utterences;
     }
 
 }
