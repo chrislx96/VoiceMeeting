@@ -12,7 +12,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-
 public class VoiceRecorder {
 
     private static final int[] SAMPLE_RATE_CANDIDATES = new int[]{44100};
@@ -25,9 +24,9 @@ public class VoiceRecorder {
     private static final String AUDIO_RECORDER_TEMP_FILE = "record_temp.raw";
     private static final int RECORDER_SAMPLERATE = 44100;
     private static final int RECORDER_BPP = 16;
-    /** The timestamp of the last time that voice is heard. */
+    //timestamp of the last time that voice is heard
     private long mLastVoiceHeardMillis = Long.MAX_VALUE;
-    /** The timestamp when the current voice is started. */
+    //timestamp when the current voice is started
     private final Object mLock = new Object();
     private long mVoiceStartedMillis;
     private OutputStream os = null;
@@ -38,35 +37,22 @@ public class VoiceRecorder {
 
 
     public static abstract class Callback {
-        /**
-         * Called when the recorder starts hearing voice.
-         */
+        //Called when the recorder starts hearing voice
         public void onVoiceStart() {
         }
-        /**
-         * Called when the recorder is hearing voice.
-         *
-         * @param data The audio data in {@link AudioFormat#ENCODING_PCM_16BIT}.
-         * @param size The size of the actual data in {@code data}.
-         */
+        //Called when the recorder is hearing voice
         public void onVoice(byte[] data, int size) {
         }
-        /**
-         * Called when the recorder stops hearing voice.
-         */
+        //Called when the recorder stops hearing voice
         public void onVoiceEnd() {
         }
     }
 
-    public VoiceRecorder(@NonNull Callback callback) {
+    VoiceRecorder(@NonNull Callback callback) {
         mCallback = callback;
     }
 
-    /**
-     * Starts recording audio.
-     *
-     * <p>The caller is responsible for calling {@link #stop()} later.</p>
-     */
+    //Starts recording audio.
     public void start() {
         mAudioRecord = createAudioRecord();
         if (mAudioRecord == null) {
@@ -76,7 +62,6 @@ public class VoiceRecorder {
         String filename = getTempFilename();
         try {
             os = new FileOutputStream(filename);
-            System.out.println("1");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -85,22 +70,16 @@ public class VoiceRecorder {
         mThread.start();
     }
 
-    /**
-     * Stops recording audio.
-     */
-
-    public void stop() {
+    //Stops recording audio
+    void stop() {
         synchronized (mLock) {
             try {
-                System.out.println("3");
                 os.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             copyWaveFile(getTempFilename(), getFilename());
             deleteTempFile();
-
             dismiss();
             if (mThread != null) {
                 mThread.interrupt();
@@ -115,34 +94,23 @@ public class VoiceRecorder {
         }
     }
 
-    /**
-     * Dismisses the currently ongoing utterance.
-     */
-    public void dismiss() {
+    //Dismisses the currently ongoing utterance
+    void dismiss() {
         if (mLastVoiceHeardMillis != Long.MAX_VALUE) {
             mLastVoiceHeardMillis = Long.MAX_VALUE;
             mCallback.onVoiceEnd();
         }
     }
 
-    /**
-     * Retrieves the sample rate currently used to record audio.
-     *
-     * @return The sample rate of recorded audio.
-     */
-    public int getSampleRate() {
+    //Retrieves the sample rate currently used to record audio
+    int getSampleRate() {
         if (mAudioRecord != null) {
             return mAudioRecord.getSampleRate();
         }
         return 0;
     }
 
-    /**
-     * Creates a new {@link AudioRecord}.
-     *
-     * @return A newly created {@link AudioRecord}, or null if it cannot be created (missing
-     * permissions?).
-     */
+    //Creates a new AudioRecord
     private AudioRecord createAudioRecord() {
         for (int sampleRate : SAMPLE_RATE_CANDIDATES) {
             final int sizeInBytes = AudioRecord.getMinBufferSize(sampleRate, CHANNEL, ENCODING);
@@ -161,12 +129,8 @@ public class VoiceRecorder {
         return null;
     }
 
-    /**
-     * Continuously processes the captured audio and notifies {@link #mCallback} of corresponding
-     * events.
-     */
+    //Continuously processes the captured audio and notifies {@link #mCallback} of corresponding events
     private class ProcessVoice implements Runnable {
-
         @Override
         public void run() {
             while (true) {
@@ -175,19 +139,15 @@ public class VoiceRecorder {
                         break;
                     }
                     final int size = mAudioRecord.read(mBuffer, 0, mBuffer.length);
-                    System.out.println(mBuffer.length);
-                    System.out.println(size);
                     if (size > 0) {
                     }
                     if (AudioRecord.ERROR_INVALID_OPERATION != size) {
                         try {
-                            System.out.println("2");
                             os.write(mBuffer);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
-
                     final long now = System.currentTimeMillis();
                     if (isHearingVoice(mBuffer, size)) {
                         if (mLastVoiceHeardMillis == Long.MAX_VALUE) {
@@ -237,21 +197,17 @@ public class VoiceRecorder {
     private String getTempFilename() {
         String filepath = Environment.getExternalStorageDirectory().getPath();
         File file = new File(filepath, AUDIO_RECORDER_FOLDER);
-
         if (!file.exists()) {
             file.mkdirs();
         }
-
         File tempFile = new File(filepath, AUDIO_RECORDER_TEMP_FILE);
 
         if (tempFile.exists())
             tempFile.delete();
-
         return (file.getAbsolutePath() + "/" + AUDIO_RECORDER_TEMP_FILE);
     }
 
     private String getPath(String nameOfFile) {
-        FileOutputStream b = null;
         File file = new File(getFileDirectory());
         file.mkdirs();
         String pathName = getFileDirectory() + nameOfFile;
@@ -268,13 +224,11 @@ public class VoiceRecorder {
     }
 
     private void copyWaveFile(String inFilename, String outFilename) {
-        FileInputStream in = null;
-        FileOutputStream out = null;
-        long totalAudioLen = 0;
-        long totalDataLen = totalAudioLen + 36;
-        long longSampleRate = RECORDER_SAMPLERATE;
-        int channels = ((RECORDER_CHANNELS == AudioFormat.CHANNEL_IN_MONO) ? 1
-                : 2);
+        FileInputStream in;
+        FileOutputStream out;
+        long totalAudioLen;
+        long totalDataLen;
+        int channels = 1;
         long byteRate = RECORDER_BPP * RECORDER_SAMPLERATE * channels / 8;
 
         byte[] data = new byte[3584];
@@ -284,24 +238,18 @@ public class VoiceRecorder {
             out = new FileOutputStream(outFilename);
             totalAudioLen = in.getChannel().size();
             totalDataLen = totalAudioLen + 36;
-
             WriteWaveFileHeader(out, totalAudioLen, totalDataLen,
-                    longSampleRate, channels, byteRate);
+                    (long) RECORDER_SAMPLERATE, channels, byteRate);
 
             while (in.read(data) != -1) {
                 out.write(data);
             }
-
             in.close();
             out.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
-
 
     private void WriteWaveFileHeader(FileOutputStream out, long totalAudioLen,
                                      long totalDataLen, long longSampleRate, int channels, long byteRate)
@@ -339,7 +287,7 @@ public class VoiceRecorder {
         header[29] = (byte) ((byteRate >> 8) & 0xff);
         header[30] = (byte) ((byteRate >> 16) & 0xff);
         header[31] = (byte) ((byteRate >> 24) & 0xff);
-        header[32] = (byte) (((RECORDER_CHANNELS == AudioFormat.CHANNEL_IN_MONO) ? 1 : 2) * 16 / 8); // block align
+        header[32] = (byte) (16 / 8); // block align
         header[33] = 0;
         header[34] = RECORDER_BPP; // bits per sample
         header[35] = 0;
