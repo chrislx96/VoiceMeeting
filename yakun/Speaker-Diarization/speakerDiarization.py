@@ -1,16 +1,16 @@
 """A demo script showing how to DIARIZATION ON WAV USING UIS-RNN."""
 
 import numpy as np
-import uisrnn
 import librosa
 import sys
+sys.path.append('uploadapp/model/Speaker-Diarization/ghostvlad')
+sys.path.append('uploadapp/model/Speaker-Diarization//visualization')
 
-sys.path.append('ghostvlad')
-sys.path.append('visualization')
+import os
+import uisrnn
 import toolkits
 import model as spkModel
-import os
-from viewer import PlotDiar
+from viewer import PlotDiars
 
 # ===========================================
 #        Parse the argument

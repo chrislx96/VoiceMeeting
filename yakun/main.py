@@ -14,7 +14,7 @@ from data_process import DataProcess
 
 parser = argparse.ArgumentParser()
 # setup pyaudio record configuration
-parser.add_argument('--CHUNK', default=1024, type=int)
+parser.add_argument('--CHUNK', default=1024*2, type=int)
 parser.add_argument('--SAMPLE_WIDTH', default=2, type=int)
 parser.add_argument('--CHANNELS', default=1, type=int)
 parser.add_argument('--RATE', default=16000, type=int)
@@ -76,7 +76,7 @@ class AudioRecorder(threading.Thread):
         while stream.is_active():
             string_audio_data = stream.read(args.CHUNK)
             frames.append(string_audio_data)
-            audio_data = np.fromstring(string_audio_data, dtype=np.int16).astype('float32')
+            audio_data = np.frombuffer(string_audio_data, dtype=np.int16).astype('float32')
             data_queue.put(audio_data)
             if self.listener.end_flag:
                 stream.stop_stream()

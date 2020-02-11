@@ -14,10 +14,29 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from login import views
+from rest_framework_jwt.views import obtain_jwt_token
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('index/', views.index),
+    path('login/', views.login),
+    path('register/', views.register),
+    path('logout/', views.logout),
+
+    path('', include('api.urls')),
+
+    # authentication
+    path('auth/', obtain_jwt_token),
+    path('auth/', include('rest_framework.urls',
+                          namespace='rest_framework')),
+
+    # upload wave
+    path('upload/', include('uploadapp.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_ROOT, document_root=settings.MEDIA_ROOT)

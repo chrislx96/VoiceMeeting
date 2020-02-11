@@ -19,7 +19,7 @@ stream = p.open(format=p.get_format_from_width(2),
 
 # read data
 data = stream.read(CHUNK)
-np_data = np.fromstring(data, dtype=np.int16).astype('float64')
+np_data = np.frombuffer(data, dtype=np.int16).astype('float64')
 
 linear1 = librosa.stft(np_data, n_fft=512, win_length=400, hop_length=160, center=True)  # linear spectrogram
 linear1 = linear1.T
