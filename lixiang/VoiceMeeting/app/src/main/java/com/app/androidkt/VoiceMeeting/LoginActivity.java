@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class LoginActivity extends Activity {
 
@@ -16,7 +17,7 @@ public class LoginActivity extends Activity {
     private SharedPreferences.Editor editor;
 
     private Button login;
-    private Button register;
+    private TextView register;
     private EditText accountEdit;
     private EditText passwordEdit;
 
@@ -30,9 +31,8 @@ public class LoginActivity extends Activity {
         sp = getSharedPreferences("info",MODE_PRIVATE);
         accountEdit = findViewById(R.id.login_edit_account);
         passwordEdit = findViewById(R.id.login_edit_pwd);
-        rememberPass = findViewById(R.id.login_checkbox_rememberpwd);
         login = findViewById(R.id.login_btn_login);
-        register = findViewById(R.id.login_btn_register);
+        register = findViewById(R.id.login_tv_register);
         boolean isRemember = sp.getBoolean("remember_password", false);
 
         if (isRemember){

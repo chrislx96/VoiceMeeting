@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/VoiceMeeting.iml" filepath="$PROJECT_DIR$/VoiceMeeting.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/VoiceMeeting-app.iml" filepath="$PROJECT_DIR$/app/VoiceMeeting-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

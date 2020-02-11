@@ -11,7 +11,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Register"
-        android:textColor="#fff"
+        android:textColor="#000"
         android:textSize="@android:dimen/app_icon_size"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"/>
@@ -22,7 +22,7 @@
         android:inputType="textPersonName"
         android:ems="10"
         android:id="@+id/register_edit_name"
-        android:hint="Enter Your Username"
+        android:hint="Enter Your Name"
         android:layout_below="@+id/register_logo"
         android:layout_marginTop="50dp"
         android:layout_marginLeft="10dp"
@@ -31,11 +31,23 @@
     <EditText
         android:layout_width="400dp"
         android:layout_height="60dp"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:id="@+id/register_edit_email"
+        android:hint="Enter Your Password"
+        android:layout_below="@+id/register_edit_name"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:drawableLeft="@drawable/email"/>
+
+    <EditText
+        android:layout_width="400dp"
+        android:layout_height="60dp"
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/register_edit_pwd"
         android:hint="Enter Your Password"
-        android:layout_below="@+id/register_edit_name"
+        android:layout_below="@+id/register_edit_email"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="10dp"
         android:drawableLeft="@drawable/password"/>
@@ -64,6 +76,16 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="50dp"/>
+
+    <TextView
+        android:id="@+id/register_tv_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Already Registered? Login Here!"
+        android:gravity="center"
+        android:layout_below="@+id/register_btn_register"
+        android:textSize="15dp"
+        android:layout_marginTop="20dp"/>
 
 
 

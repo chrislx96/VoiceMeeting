@@ -13,18 +13,27 @@
         android:layout_centerInParent="true"
         ></RelativeLayout>
 
-    <Button
+<!--    <Button-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="register"-->
+<!--        android:id="@+id/login_btn_register"-->
+<!--        android:textColor="#ffffff"-->
+<!--        android:background="#e52525"-->
+<!--        android:textSize="20dp"-->
+<!--        android:layout_below="@+id/login_btn_login"-->
+<!--        android:layout_alignParentLeft="true"-->
+<!--        android:layout_alignParentStart="true"-->
+<!--        android:layout_marginTop="10dp"/>-->
+    <TextView
+        android:id="@+id/login_tv_register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="register"
-        android:id="@+id/login_btn_register"
-        android:textColor="#ffffff"
-        android:background="#e52525"
-        android:textSize="20dp"
+        android:text="Already Registered? Login Here!"
+        android:gravity="center"
         android:layout_below="@+id/login_btn_login"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp"/>
+        android:textSize="15dp"
+        android:layout_marginTop="20dp"/>
 
     <Button
         android:layout_width="match_parent"
@@ -56,17 +65,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Login"
-        android:textColor="#fff"
+        android:textColor="#000"
         android:textSize="@android:dimen/app_icon_size"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"/>
 
-    <CheckBox
-        android:id="@+id/login_checkbox_rememberpwd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/login_edit_pwd"
-        android:text="Remember Password"/>
+<!--    <CheckBox-->
+<!--        android:id="@+id/login_checkbox_rememberpwd"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/login_edit_pwd"-->
+<!--        android:text="Remember Password"/>-->
 
     <EditText
         android:layout_width="400dp"
@@ -85,8 +94,8 @@
         android:layout_height="60dp"
         android:inputType="textPersonName"
         android:id="@+id/login_edit_account"
-        android:drawableLeft="@drawable/account"
-        android:hint="Enter Your Username"
+        android:drawableLeft="@drawable/email"
+        android:hint="Enter Your Email"
         android:layout_below="@+id/logo"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
