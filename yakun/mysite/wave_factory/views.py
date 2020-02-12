@@ -52,9 +52,14 @@ class WaveFactoryView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def process_data(self, path, request):
+        print('==============================================')
+        print('Start processing!!!')
+        print('==============================================')
         result = UploadwaveConfig.predictor.predict(path)
         file = self.get_object(request.data.get('uuid'))
         file.result = result
         file.save()
+        print('==============================================')
         print('Finish processing!!!')
+        print('==============================================')
 
