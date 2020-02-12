@@ -4,121 +4,85 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends Activity {
 
-    // sharedPreference write and read account info
-    private SharedPreferences sp;
-    private SharedPreferences.Editor editor;
+    private EditText mEmail, mPassword;
+    private Button mLoginBtn;
+    private TextView mCreateBtn;
+    private ProgressBar mProgressBar;
+    FirebaseAuth fAuth;
 
-    private Button login;
-    private TextView register;
-    private EditText accountEdit;
-    private EditText passwordEdit;
-
-    private CheckBox rememberPass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        sp = getSharedPreferences("info",MODE_PRIVATE);
-        accountEdit = findViewById(R.id.login_edit_account);
-        passwordEdit = findViewById(R.id.login_edit_pwd);
-        login = findViewById(R.id.login_btn_login);
-        register = findViewById(R.id.login_tv_register);
-        boolean isRemember = sp.getBoolean("remember_password", false);
+        mEmail = findViewById(R.id.login_edit_account);
+        mPassword = findViewById(R.id.login_edit_pwd);
+        mLoginBtn = findViewById(R.id.login_btn_login);
+        mCreateBtn = findViewById(R.id.login_tv_register);
+        mProgressBar = findViewById(R.id.progressBar);
+        fAuth = FirebaseAuth.getInstance();
 
-        if (isRemember){
-            // write account and password into edit text
-            String account = sp.getString("account", "");
-            String password = sp.getString("password", "");
-            accountEdit.setText(account);
-            passwordEdit.setText(password);
-            rememberPass.setChecked(true);
-        }
-
-        /* LOGIN part
-        login.setOnClickListener(new View.OnClickListener() {
+        mLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String username = accountEdit.getText().toString();
-                final String password = passwordEdit.getText().toString();
-                //服务端路径
-                final String serverPath = "http://xxx.xxx.xxx.xxx:8080/ServletTest/login";
-                if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-                    Toast.makeText(LoginActivity.this,"用户名或密码不能为空！",Toast.LENGTH_SHORT).show();
-                } else {
-                    editor = sp.edit();
-                    if (rememberPass.isChecked()) {
-                        editor.putBoolean("remember_password", true);
-                        editor.putString("account", username);
-                        editor.putString("password", password);
-                    } else {
-                        editor.clear();
-                    }
-                    editor.commit();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                //使用GET方式请求服务器只能这样
-                                URL url = new URL(serverPath + "?username=" + username + "&password=" + password);
-                                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                                httpURLConnection.setRequestMethod("GET");
-                                httpURLConnection.setConnectTimeout(5000);
-                                httpURLConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0");
-                                int responseCode = httpURLConnection.getResponseCode();
-                                if (200 == responseCode) {
-                                    InputStream inputStream = httpURLConnection.getInputStream();
-                                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-                                    final String responseMsg = bufferedReader.readLine();
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (responseMsg.equals("true")){
-                                                Toast.makeText(LoginActivity.this, "登录成功！", Toast.LENGTH_LONG).show();
-                                            }else {
-                                                Toast.makeText(LoginActivity.this, "登录失败！", Toast.LENGTH_LONG).show();
-                                            }
-                                        }
-                                    });
-                                    bufferedReader.close();
-                                    httpURLConnection.disconnect();
-                                } else {
+                String email = mEmail.getText().toString().trim();
+                String password = mPassword.getText().toString().trim();
 
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
+                if(TextUtils.isEmpty(email)){
+                    mEmail.setError("Email is required.");
                 }
+
+                if(TextUtils.isEmpty(password)){
+                    mPassword.setError("Password is required.");
+                }
+
+                if(password.length() < 0){
+                    mPassword.setError("Password must be more than 6 characters");
+                }
+
+                mProgressBar.setVisibility(View.VISIBLE);
+
+                //authenticate user
+                fAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(LoginActivity.this,"Logged in successfully", Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(getApplicationContext(),RecordingActivity.class));
+                        }else{
+                            Toast.makeText(LoginActivity.this,"ERROR!" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
             }
         });
-        */
 
-        login.setOnClickListener(new View.OnClickListener() {
+        mCreateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, RecordingActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(getApplicationContext(),RegisterActivity.class  ));
             }
         });
 
-        register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(intent);
-            }
-        });
+
 
     }
 }
