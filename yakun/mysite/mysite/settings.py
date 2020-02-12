@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     # added
     'rest_framework',
     'login',
-    'api',
     'wave_factory',
 ]
 
@@ -127,20 +126,3 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_PERMISSION_CLASSES': (
-#         # read only for unauthorised users
-#         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-#         # 'rest_framework.permissions.IsAuthenticated'
-#     ),
-#     'DEFAULT_AUTHENTICATION_CLASSES': (
-#         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-#         'rest_framework.authentication.BasicAuthentication',
-#         'rest_framework.authentication.SessionAuthentication',
-#     )
-# }
-REST_FRAMEWORK = {
-    'DEFAULT_PARSER_CLASSES': (
-        'rest_framework.parsers.FileUploadParser'
-    )
-}

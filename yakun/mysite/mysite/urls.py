@@ -17,8 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from login import views
 from rest_framework_jwt.views import obtain_jwt_token
+from login import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,13 +26,6 @@ urlpatterns = [
     path('login/', views.login),
     path('register/', views.register),
     path('logout/', views.logout),
-
-    path('', include('api.urls')),
-
-    # authentication
-    path('auth/', obtain_jwt_token),
-    path('auth/', include('rest_framework.urls',
-                          namespace='rest_framework')),
 
     # upload wave
     path('wave_factory/', include('wave_factory.urls')),
