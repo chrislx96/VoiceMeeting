@@ -28,40 +28,6 @@ public class HistoryActivity extends AppCompatActivity {
         addTimelibeRows(timelineRowsList, 1, new Date(), "liuweihong", "fuck you");
 
 
-//        // Create new timeline row (Row Id)
-//        TimelineRow myRow = new TimelineRow(0);
-//
-//        // To set the row Date (optional)
-//        myRow.setDate(new Date());
-//        // To set the row Title (optional)
-//        myRow.setTitle("Title");
-//        // To set the row Description (optional)
-//        myRow.setDescription("“1 plus 5 ram”的图片搜索结果" +
-//                "The device comes with a Qualcomm Snapdragon 835 chipset clocked at 2.45 GHz, with up to 8 GB RAM and 128 GB storage. It has a 3300 mAh battery with OnePlus' proprietary Dash Charge technology and a 1080p AMOLED display with DCI-P3 wide colour gamut.");
-//        // To set the row bitmap image (optional)
-//        myRow.setImage(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
-//        // To set row Below Line Color (optional)
-//        myRow.setBellowLineColor(Color.argb(255, 0, 0, 0));
-//        // To set row Below Line Size in dp (optional)
-//        myRow.setBellowLineSize(6);
-//        // To set row Image Size in dp (optional)
-//        myRow.setImageSize(40);
-//        // To set background color of the row image (optional)
-//        myRow.setBackgroundColor(Color.argb(255, 0, 0, 0));
-//        // To set the Background Size of the row image in dp (optional)
-//        myRow.setBackgroundSize(60);
-//        // To set row Date text color (optional)
-//        myRow.setDateColor(Color.argb(255, 0, 0, 0));
-//        // To set row Title text color (optional)
-//        myRow.setTitleColor(Color.argb(255, 0, 0, 0));
-//        // To set row Description text color (optional)
-//        myRow.setDescriptionColor(Color.argb(255, 0, 0, 0));
-//
-//
-//
-//        // Add the new row to the list
-//        timelineRowsList.add(myRow);
-
         // Create the Timeline Adapter
         ArrayAdapter<TimelineRow> myAdapter = new TimelineViewAdapter(this, 0, timelineRowsList,
                 //if true, list will be sorted by date
