@@ -35,7 +35,7 @@ urlpatterns = [
                           namespace='rest_framework')),
 
     # upload wave
-    path('upload/', include('uploadapp.urls')),
+    path('wave_factory/', include('wave_factory.urls')),
 ]
 
 if settings.DEBUG:

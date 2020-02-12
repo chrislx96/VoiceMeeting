@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'login',
     'api',
-    'uploadapp',
+    'wave_factory',
 ]
 
 MIDDLEWARE = [
