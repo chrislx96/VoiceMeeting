@@ -22,7 +22,11 @@ class WaveFactoryView(APIView):
             raise Http404
 
     def get(self, request, *args, **kwargs):
-        file = self.get_object(request.data.get('uuid'))
+        uuid = request.GET.get('uuid')
+        if uuid is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        file = self.get_object(uuid)
         result_serializer = ResultSerializer(data={'uuid': file.uuid, 'result': file.result})
 
         if result_serializer.is_valid():
@@ -45,7 +49,10 @@ class WaveFactoryView(APIView):
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
-        file = self.get_object(request.data.get('uuid'))
+        uuid = request.GET.get('uuid')
+        if uuid is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        file = self.get_object(uuid)
         file_path = r'media/' + str(file)
         file.delete()
         os.remove(file_path)

@@ -16,19 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from django.conf.urls import url
 from django.conf.urls.static import static
-from rest_framework_jwt.views import obtain_jwt_token
-from login import views
+from wave_factory import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('index/', views.index),
-    path('login/', views.login),
-    path('register/', views.register),
-    path('logout/', views.logout),
 
-    # upload wave
-    path('wave_factory/', include('wave_factory.urls')),
+    # e.g wave_factory/uuid/
+    # url(r'^wave_factory/uuid=(?P<pk>[\w:|-]+)$', views.WaveFactoryView.as_view())
+    path('wave_factory/', views.WaveFactoryView.as_view())
 ]
 
 if settings.DEBUG:
