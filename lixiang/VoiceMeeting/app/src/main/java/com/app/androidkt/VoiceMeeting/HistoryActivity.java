@@ -1,5 +1,6 @@
 package com.app.androidkt.VoiceMeeting;
 
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
@@ -15,18 +16,29 @@ import java.util.Date;
 
 public class HistoryActivity extends AppCompatActivity {
 
+    ArrayList<Float> startTime;
+    ArrayList<String> utterences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+//        Intent intent = getIntent();
+//        if (intent != null) {
+//            startTime = intent.getFloatArrayExtra("time");
+//            System.out.println(startTime);
+//            utterences = intent.getStringArrayExtra("speech");
+//        }
+        DataPasser myDP = (DataPasser) getApplication();
+        startTime = myDP.getStartTime();
+        utterences = myDP.getUtterences();
 
 
         // Create Timeline rows List
         ArrayList<TimelineRow> timelineRowsList = new ArrayList<>();
 
-        addTimelibeRows(timelineRowsList, 0, new Date(), "lixiang", "hey how are you");
-        addTimelibeRows(timelineRowsList, 1, new Date(), "liuweihong", "fuck you");
-
+        for (int i =0; i<utterences.size();i++) {
+            addTimelibeRows(timelineRowsList, i, "Time: "+String.valueOf(startTime.get(i)) + " s", "Xiang Li: "+utterences.get(i));
+        }
 
         // Create the Timeline Adapter
         ArrayAdapter<TimelineRow> myAdapter = new TimelineViewAdapter(this, 0, timelineRowsList,
@@ -39,12 +51,12 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     // add timeline rows function
-    private void addTimelibeRows(ArrayList<TimelineRow> timelineRowsList, int id, Date date, String title, String content){
+    private void addTimelibeRows(ArrayList<TimelineRow> timelineRowsList, int id, String title, String content){
         // Create new timeline row (Row Id)
         TimelineRow myRow = new TimelineRow(id);
 
         // To set the row Date (optional)
-        myRow.setDate(date);
+//        myRow.setDate(date);
         // To set the row Title (optional)
         myRow.setTitle(title);
         // To set the row Description (optional)

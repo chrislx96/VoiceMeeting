@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RecordingActivity extends AppCompatActivity {
@@ -115,6 +116,14 @@ public class RecordingActivity extends AppCompatActivity {
                     break;
                 case R.id.recording_btn_history:
                     Intent intent = new Intent(RecordingActivity.this, HistoryActivity.class);
+//                    System.out.println(Arrays.toString(getStartTime().toArray()));
+//                    System.out.println(Arrays.toString(getUtterences().toArray()));
+
+                      DataPasser myDP = (DataPasser) getApplication();
+                      myDP.setStartTime(startTime);
+                      myDP.setUtterences(utterences);
+//                    intent.putExtra("time",getStartTime().toArray());
+//                    intent.putExtra("speech",getUtterences().toArray());
                     startActivity(intent);
             }
         }
