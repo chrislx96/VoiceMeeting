@@ -14,9 +14,17 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+
+import static com.app.androidkt.VoiceMeeting.VoiceRecorder.filePath;
 
 public class RecordingActivity extends AppCompatActivity {
 
@@ -91,6 +99,7 @@ public class RecordingActivity extends AppCompatActivity {
         public void onClick(View view) {
             switch (view.getId()){
                 case R.id.recording_btn_start:
+
                     final long startT = System.currentTimeMillis();
                     start = startT;
                     utterences.clear();
@@ -111,8 +120,14 @@ public class RecordingActivity extends AppCompatActivity {
                     speechAPI.removeListener(mSpeechServiceListener);
                     speechAPI.destroy();
                     speechAPI = null;
+
+                    Thread ts = new Thread(new SendFile());
+                    ts.start();
+
                     break;
                 case R.id.recording_btn_result:
+                    Thread rs = new Thread(new ReceiveFile());
+                    rs.start();
                     break;
                 case R.id.recording_btn_history:
                     Intent intent = new Intent(RecordingActivity.this, HistoryActivity.class);
@@ -208,4 +223,51 @@ public class RecordingActivity extends AppCompatActivity {
         return utterences;
     }
 
+
+    class SendFile implements Runnable {
+
+        @Override
+        public void run() {
+            String serverUrl = "https://45.113.235.106/wave_factory/";
+            String fileUUid = "3511qf-c682-4198-aef8-3449f7e89630";
+            File audioFile = new File(filePath);
+            System.out.println(filePath);
+            AndroidHTTPUtils httpUtils = new AndroidHTTPUtils();
+            try {
+                AndroidHTTPUtils.HttpResponse response = httpUtils.doPost(serverUrl, fileUUid, audioFile.getName(), filePath);
+                System.out.println(response.getResponseBody());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+
+
+    }
+
+    class ReceiveFile implements Runnable {
+
+        @Override
+        public void run() {
+            while(true){
+                String serverUrl = "https://45.113.235.106/wave_factory/?uuid=3511qf-c682-4198-aef8-3449f7e89630";
+//                String serverUrl = "https://reqres.in/api/users";
+
+                AndroidHTTPUtils httpUtils = new AndroidHTTPUtils();
+//                try {
+//                    AndroidHTTPUtils.HttpResponse response = httpUtils.doGet(serverUrl);
+//                    System.out.println(response.getResponseBody());
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+                httpUtils.debug2();
+
+
+
+            }
+        }
+    }
 }
+
