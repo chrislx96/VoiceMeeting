@@ -40,8 +40,8 @@ public class AndroidHTTPUtils {
 
     public void debug2(){
         OkHttpClient client = new OkHttpClient();
-//        String url = "https://45.113.235.106/wave_factory/?uuid=3511qf-c682-4198-aef8-3449f7e89630";
-        String url = "https://reqres.in/api/users";
+        String url = "http://45.113.235.106/wave_factory/?uuid=3511qf-c682-4198-aef8-3449f7e89630";
+//        String url = "https://reqres.in/api/users";
 
         //RequestBody body = RequestBody.create(JSON, json.toString());
         Request request = new Request.Builder().url(url).build();
