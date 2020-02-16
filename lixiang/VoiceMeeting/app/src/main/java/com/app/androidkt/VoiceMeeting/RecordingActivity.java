@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 
 import okhttp3.OkHttpClient;
@@ -234,8 +235,12 @@ public class RecordingActivity extends AppCompatActivity {
     class SendFile implements Runnable {
         @Override
         public void run() {
-            String serverUrl = "https://45.113.235.106/wave_factory/";
-            String fileUUid = "3511qf-c682-4198-aef8-3449f7e89630";
+            String serverUrl = "http://45.113.235.106/wave_factory/";
+            final String fileUUid = UUID.randomUUID().toString();
+            System.out.println(fileUUid.length());
+            DataPasser myDP = (DataPasser) getApplication();
+            myDP.setUuid(fileUUid);
+
             File audioFile = new File(filePath);
             System.out.println(filePath);
             AndroidHTTPUtils httpUtils = new AndroidHTTPUtils();
@@ -248,19 +253,29 @@ public class RecordingActivity extends AppCompatActivity {
         }
     }
 
-
     class ReceiveFile implements Runnable {
         private volatile String result = "";
         @Override
         public void run() {
+            String serverUrl = "http://45.113.235.106/wave_factory/?uuid=";
+            DataPasser myDP = (DataPasser) getApplication();
+            String fileUUid = myDP.getUuid();
+            serverUrl +=fileUUid;
+            System.out.println(serverUrl);
+            AndroidHTTPUtils httpUtils = new AndroidHTTPUtils();
+
             while("".equals(result) || "fail".equals(result) || "null".equals(result)){
-                //String serverUrl = "https://45.113.235.106/wave_factory/?uuid=3511qf-c682-4198-aef8-3449f7e89630";
+
                 //String serverUrl = "https://reqres.in/api/users";
-                AndroidHTTPUtils httpUtils = new AndroidHTTPUtils();
-                result = httpUtils.debug2();
+                result = httpUtils.doGet2(serverUrl);
                 System.out.println("return result:" + result);
-                DataPasser myDP = (DataPasser) getApplication();
                 myDP.setCurrentResult(result);
+
+            }
+            try {
+                httpUtils.doDelete(serverUrl);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         public String getResult(){

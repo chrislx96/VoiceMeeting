@@ -79,9 +79,10 @@ public class VoiceRecorder {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            copyWaveFile(getTempFilename(), getFilename());
+            final String path = getFilename();
+            copyWaveFile(getTempFilename(), path);
             deleteTempFile();
-            filePath = getFilename();
+            filePath = path;
             dismiss();
             if (mThread != null) {
                 mThread.interrupt();

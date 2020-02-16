@@ -7,6 +7,8 @@ public class DataPasser extends Application {
     String currentResult;
     ArrayList<Float> startTime;
     ArrayList<String> utterences;
+    String filePath;
+    String uuid;
     public ArrayList<Float> getStartTime() {
         return startTime;
     }
@@ -25,7 +27,16 @@ public class DataPasser extends Application {
 
     public void setCurrentResult(String currentResult){this.currentResult = currentResult;}
 
+    public void setFilePath(String path) {
+        this.filePath = path;
+    }
 
+    public String getFilePath(){return this.filePath;}
+
+    public void setUuid(String uuid){
+        this.uuid = uuid;
+    }
+    public String getUuid(){return this.uuid;}
 
 
     @Override

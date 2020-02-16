@@ -41,9 +41,8 @@ public class AndroidHTTPUtils {
 
     }
 
-    public String debug2(){
+    public String doGet2(String url){
         OkHttpClient client = new OkHttpClient();
-        String url = "http://45.113.235.106/wave_factory/?uuid=3511qf-c682-4198-aef8-3449f7e89630";
 
         // synch result class
         final SyncResult syncResult = new SyncResult();
