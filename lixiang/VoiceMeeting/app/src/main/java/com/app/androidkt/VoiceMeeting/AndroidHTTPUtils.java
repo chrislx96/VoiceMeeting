@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class AndroidHTTPUtils {
+
+
     public HttpResponse doPost(String url, String uuid, String filename, String filePath) throws IOException {
 
 
@@ -36,13 +38,17 @@ public class AndroidHTTPUtils {
         try (Response response = client.newCall(request).execute()) {
             return new HttpResponse(response);
         }
+
     }
 
-    public void debug2(){
+    public String debug2(){
         OkHttpClient client = new OkHttpClient();
         String url = "http://45.113.235.106/wave_factory/?uuid=3511qf-c682-4198-aef8-3449f7e89630";
 
-        Request request = new Request.Builder().url(url).build();
+        // synch result class
+        final SyncResult syncResult = new SyncResult();
+
+        final Request request = new Request.Builder().url(url).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -53,12 +59,12 @@ public class AndroidHTTPUtils {
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.isSuccessful()){
                     String myResponse = response.body().string();
-                    System.out.println(myResponse);
-
-
+                    System.out.println("http receive:" + myResponse);
+                    syncResult.setResult(myResponse);
                 }
             }
         });
+        return syncResult.getResult();
     }
 
     public HttpResponse doDelete(String url) throws IOException {

@@ -4,6 +4,7 @@ import android.app.Application;
 import java.util.ArrayList;
 
 public class DataPasser extends Application {
+    String currentResult;
     ArrayList<Float> startTime;
     ArrayList<String> utterences;
     public ArrayList<Float> getStartTime() {
@@ -14,15 +15,16 @@ public class DataPasser extends Application {
         return utterences;
     }
 
-    public void setStartTime(ArrayList<Float> startTime) {
+    public String getCurrentResult(){ return currentResult;}
 
-        this.startTime = startTime;
-
-    }
+    public void setStartTime(ArrayList<Float> startTime) {this.startTime = startTime;}
 
     public  void setUtterences(ArrayList<String> utterences){
         this.utterences =utterences;
     }
+
+    public void setCurrentResult(String currentResult){this.currentResult = currentResult;}
+
 
 
 

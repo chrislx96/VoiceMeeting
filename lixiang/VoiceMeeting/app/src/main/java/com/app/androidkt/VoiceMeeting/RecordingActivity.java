@@ -24,6 +24,8 @@ import java.util.Arrays;
 import java.util.List;
 
 
+import okhttp3.OkHttpClient;
+
 import static com.app.androidkt.VoiceMeeting.VoiceRecorder.filePath;
 
 public class RecordingActivity extends AppCompatActivity {
@@ -99,7 +101,6 @@ public class RecordingActivity extends AppCompatActivity {
         public void onClick(View view) {
             switch (view.getId()){
                 case R.id.recording_btn_start:
-
                     final long startT = System.currentTimeMillis();
                     start = startT;
                     utterences.clear();
@@ -126,15 +127,21 @@ public class RecordingActivity extends AppCompatActivity {
 
                     break;
                 case R.id.recording_btn_result:
-                    Thread rs = new Thread(new ReceiveFile());
-                    rs.start();
+//                    Thread rs = new Thread(new ReceiveFile());
+//                    rs.start();
+                    ReceiveFile myReceiveFile = new ReceiveFile();
+                    Thread thread = new Thread(myReceiveFile);
+                    thread.start();
+
+                    DataPasser myDP = (DataPasser) getApplication();
+                    System.out.println("currentResult in myDP:" + myDP.getCurrentResult());
+
                     break;
                 case R.id.recording_btn_history:
                     Intent intent = new Intent(RecordingActivity.this, HistoryActivity.class);
 //                    System.out.println(Arrays.toString(getStartTime().toArray()));
 //                    System.out.println(Arrays.toString(getUtterences().toArray()));
-
-                      DataPasser myDP = (DataPasser) getApplication();
+                      myDP = (DataPasser) getApplication();
                       myDP.setStartTime(startTime);
                       myDP.setUtterences(utterences);
 //                    intent.putExtra("time",getStartTime().toArray());
@@ -243,14 +250,21 @@ public class RecordingActivity extends AppCompatActivity {
 
 
     class ReceiveFile implements Runnable {
+        private volatile String result = "";
         @Override
         public void run() {
-            while(true){
-                String serverUrl = "https://45.113.235.106/wave_factory/?uuid=3511qf-c682-4198-aef8-3449f7e89630";
-//                String serverUrl = "https://reqres.in/api/users";
+            while("".equals(result) || "fail".equals(result) || "null".equals(result)){
+                //String serverUrl = "https://45.113.235.106/wave_factory/?uuid=3511qf-c682-4198-aef8-3449f7e89630";
+                //String serverUrl = "https://reqres.in/api/users";
                 AndroidHTTPUtils httpUtils = new AndroidHTTPUtils();
-                httpUtils.debug2();
+                result = httpUtils.debug2();
+                System.out.println("return result:" + result);
+                DataPasser myDP = (DataPasser) getApplication();
+                myDP.setCurrentResult(result);
             }
+        }
+        public String getResult(){
+                return result;
         }
     }
 }
