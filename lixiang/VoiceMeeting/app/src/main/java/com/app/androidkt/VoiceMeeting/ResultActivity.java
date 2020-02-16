@@ -1,12 +1,18 @@
 package com.app.androidkt.VoiceMeeting;
 
 import android.app.Activity;
-import android.graphics.Color;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+
+import android.os.Bundle;
+
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -15,86 +21,58 @@ import org.achartengine.model.SeriesSelection;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
+
+import static com.app.androidkt.VoiceMeeting.JsonReader.readJson;
+
 public class ResultActivity extends Activity {
 
-    private static int[] COLORS = new int[] { Color.GREEN, Color.BLUE, Color.MAGENTA, Color.CYAN };
-
-    private static double[] VALUES = new double[] { 10, 11, 12, 13 };
-
-    private static String[] NAME_LIST = new String[] { "A", "B", "C", "D" };
-
-    private CategorySeries mSeries = new CategorySeries("");
-
-    private DefaultRenderer mRenderer = new DefaultRenderer();
-
-    private GraphicalView mChartView;
+    String result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
-        mRenderer.setApplyBackgroundColor(true);
-        mRenderer.setBackgroundColor(Color.argb(100, 50, 50, 50));
-        mRenderer.setChartTitleTextSize(200);
-        mRenderer.setLabelsTextSize(15);
-        mRenderer.setLegendTextSize(15);
-        mRenderer.setMargins(new int[] { 20, 30, 15, 0 });
-        mRenderer.setZoomButtonsVisible(true);
+        PieChart pieChart = findViewById(R.id.piechart);
 
-        for (int i = 0; i < VALUES.length; i++) {
-            mSeries.add(NAME_LIST[i] + " " + VALUES[i], VALUES[i]);
-            SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
-            renderer.setColor(COLORS[(mSeries.getItemCount() - 1) % COLORS.length]);
-            mRenderer.addSeriesRenderer(renderer);
+
+        // get input data
+        DataPasser myDP = (DataPasser) getApplication();
+        result = myDP.getCurrentResult();
+        System.out.println("result in result activity class: "+result);
+        Hashtable<long[],Integer> finalTimeline = readJson(result);
+        Hashtable<Integer,Long> totalDuration = new Hashtable<>();
+
+
+        for (long[] startEnd:
+             finalTimeline.keySet()) {
+            long duration = startEnd[1]-startEnd[0];
+            int speaker = finalTimeline.get(startEnd);
+            if (totalDuration.keySet().contains(speaker)){
+                totalDuration.put(speaker,totalDuration.get(speaker)+duration);
+            }else {
+                totalDuration.put(speaker,duration);
+            }
         }
 
-        if (mChartView != null) {
-            mChartView.repaint();
+
+        ArrayList NoOfEmp = new ArrayList();
+        ArrayList year = new ArrayList();
+        for (int no:
+                totalDuration.keySet()) {
+            System.out.println(totalDuration.get(no));
+            NoOfEmp.add(new Entry(totalDuration.get(no)/1000, no));
+            year.add("\""+no+"\"");
         }
 
+        PieDataSet dataSet = new PieDataSet(NoOfEmp, "Duration(s) each speaker");
+
+        PieData data = new PieData(year, dataSet);
+        pieChart.setData(data);
+        dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        pieChart.animateXY(3000, 3000);
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mChartView == null) {
-            LinearLayout layout = (LinearLayout) findViewById(R.id.chart);
-            mChartView = ChartFactory.getPieChartView(this, mSeries, mRenderer);
-            mRenderer.setClickEnabled(true);
-            mRenderer.setSelectableBuffer(10);
-
-            mChartView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SeriesSelection seriesSelection = mChartView.getCurrentSeriesAndPoint();
-
-                    if (seriesSelection == null) {
-                        Toast.makeText(ResultActivity.this,"No chart element was clicked", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(ResultActivity.this,"Chart element data point index "+ (seriesSelection.getPointIndex()+1) + " was clicked" + " point value="+ seriesSelection.getValue(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-
-            mChartView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    SeriesSelection seriesSelection = mChartView.getCurrentSeriesAndPoint();
-                    if (seriesSelection == null) {
-                        Toast.makeText(ResultActivity.this,"No chart element was long pressed", Toast.LENGTH_SHORT);
-                        return false;
-                    } else {
-                        Toast.makeText(ResultActivity.this,"Chart element data point index "+ seriesSelection.getPointIndex()+ " was long pressed", Toast.LENGTH_SHORT);
-                        return true;
-                    }
-                }
-            });
-            layout.addView(mChartView, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
-        }
-        else {
-            mChartView.repaint();
-        }
-    }
-
-
 }

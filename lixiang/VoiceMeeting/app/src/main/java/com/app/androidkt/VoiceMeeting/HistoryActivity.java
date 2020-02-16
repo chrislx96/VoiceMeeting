@@ -13,24 +13,25 @@ import org.qap.ctimelineview.TimelineViewAdapter;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Hashtable;
+
+import static com.app.androidkt.VoiceMeeting.JsonReader.readJson;
 
 public class HistoryActivity extends AppCompatActivity {
 
     ArrayList<Float> startTime;
     ArrayList<String> utterences;
+    String result;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
-//        Intent intent = getIntent();
-//        if (intent != null) {
-//            startTime = intent.getFloatArrayExtra("time");
-//            System.out.println(startTime);
-//            utterences = intent.getStringArrayExtra("speech");
-//        }
+
         DataPasser myDP = (DataPasser) getApplication();
         startTime = myDP.getStartTime();
         utterences = myDP.getUtterences();
+        result = myDP.getCurrentResult();
+        Hashtable<long[],Integer> finalTimeline = readJson(result);
 
 
         // Create Timeline rows List

@@ -24,6 +24,7 @@ public class VoiceRecorder {
     private static final String AUDIO_RECORDER_TEMP_FILE = "record_temp.raw";
     private static final int RECORDER_SAMPLERATE = 44100;
     private static final int RECORDER_BPP = 16;
+    static String filePath;
     //timestamp of the last time that voice is heard
     private long mLastVoiceHeardMillis = Long.MAX_VALUE;
     //timestamp when the current voice is started
@@ -78,8 +79,10 @@ public class VoiceRecorder {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            copyWaveFile(getTempFilename(), getFilename());
+            final String path = getFilename();
+            copyWaveFile(getTempFilename(), path);
             deleteTempFile();
+            filePath = path;
             dismiss();
             if (mThread != null) {
                 mThread.interrupt();
