@@ -197,7 +197,9 @@ public class HTTPUtils {
 
 
     /**
-     *
+     * Nested Class
+     * store response code, header and body
+     * 
      */
     @Data
     public class Response {
@@ -207,12 +209,16 @@ public class HTTPUtils {
     }
 
 
+    //==================================================================
+    // test functions
+    //==================================================================
     public static void main(String[] args) throws IOException {
         HTTPUtils httpUtils = new HTTPUtils();
         String url = "http://104.197.180.173/wave_factory/";
         String header = "";
         String fileUUid = "3511qf-c682-4198-aef8-3449f7e89630";
         String filePath = "output.wav";
+
 
 //        // test Post function
 //        Response postResponse = httpUtils.doPost(url, header, fileUUid, filePath);

@@ -5,40 +5,15 @@ import librosa
 import os
 import json
 
-# ===========================================
-#        Parse the argument
-# ===========================================
-# import argparse
-
-# parser = argparse.ArgumentParser()
-# set up training configuration.
-# parser.add_argument('--gpu', default='', type=str)
-# parser.add_argument('--resume', default=r'speakerDiarization/ghostvlad/pretrained/weights.h5', type=str)
-# parser.add_argument('--data_path', default='4persons', type=str)
-# set up network configuration.
-# parser.add_argument('--net', default='resnet34s', choices=['resnet34s', 'resnet34l'], type=str)
-# parser.add_argument('--ghost_cluster', default=2, type=int)
-# parser.add_argument('--vlad_cluster', default=8, type=int)
-# parser.add_argument('--bottleneck_dim', default=512, type=int)
-# parser.add_argument('--aggregation_mode', default='gvlad', choices=['avg', 'vlad', 'gvlad'], type=str)
-# set up learning rate, training loss and optimizer.
-# parser.add_argument('--loss', default='softmax', choices=['softmax', 'amsoftmax'], type=str)
-# parser.add_argument('--test_type', default='normal', choices=['normal', 'hard', 'extend'], type=str)
-
-# global args
-# args = parser.parse_args()
-
 SAVED_MODEL_NAME = r'wave_factory/model/speakerDiarization/pretrained/saved_model.uisrnn_benchmark'
 resume = r'wave_factory/model/speakerDiarization/ghostvlad/pretrained/weights.h5'
 
-
-# SAVED_MODEL_NAME = r'speakerDiarization/pretrained/saved_model.uisrnn_benchmark'
-# resume = r'speakerDiarization/ghostvlad/pretrained/weights.h5'
 
 class Predictor:
     def __init__(self):
         self.network_eval, self.uisrnnModel, self.inference_args = self.load_model()
 
+    # load the model with parameters
     def load_model(self):
         params = {'dim': (257, None, 1),
                   'nfft': 512,
@@ -58,6 +33,7 @@ class Predictor:
         # !!!!!!!!!!!!!!!!!! save the problem !!!!!!!!!!!!!!!!!!!!!
         network_eval._make_predict_function()
 
+        # load uisrnn model parameters
         model_args, inference_args = uisrnn.parse_arguments()
         model_args.observation_dim = 512
         uisrnnModel = uisrnn.UISRNN(model_args)
@@ -119,19 +95,11 @@ class Predictor:
         result_json = json.dumps(result, sort_keys=True)
         return result_json
 
-        # for spk, timeDicts in speakerSlice.items():
-        #     print('========= ' + str(spk) + ' =========')
-        #     for timeDict in timeDicts:
-        #         s = timeDict['start']
-        #         e = timeDict['stop']
-        #         s = fmtTime(s)  # change point moves to the center of the slice
-        #         e = fmtTime(e)
-        #         print(s + ' ==> ' + e)
-
 
 ##############################################################################
 ##############################################################################
 
+# load and process wave file with overlap windows
 # 0s        1s        2s                  4s                  6s
 # |-------------------|-------------------|-------------------|
 # |-------------------|
@@ -169,6 +137,7 @@ def load_data(path, win_length=400, sr=16000, hop_length=160, n_fft=512, embeddi
     return utterances_spec, intervals
 
 
+# load wave file
 def load_wav(vid_path, sr):
     wav, _ = librosa.load(vid_path, sr=sr)
     intervals = librosa.effects.split(wav, top_db=20)
@@ -178,12 +147,14 @@ def load_wav(vid_path, sr):
     return np.array(wav_output), (intervals / sr * 1000).astype(int)
 
 
+# create Short-time Fourier transform of wave file
 def lin_spectogram_from_wav(wav, hop_length, win_length, n_fft=1024):
     linear = librosa.stft(wav, n_fft=n_fft, win_length=win_length, hop_length=hop_length)  # linear spectrogram
     return linear.T
 
 
-def genMap(intervals):  # interval slices to maptable
+# interval slices to maptable
+def genMap(intervals):
     slicelen = [sliced[1] - sliced[0] for sliced in intervals.tolist()]
     mapTable = {}  # vad erased time to origin time, only split points
     idx = 0
@@ -197,8 +168,8 @@ def genMap(intervals):  # interval slices to maptable
     return mapTable, keys
 
 
-def arrangeResult(labels,
-                  time_spec_rate):  # {'1': [{'start':10, 'stop':20}, {'start':30, 'stop':40}], '2': [{'start':90, 'stop':100}]}
+# {'1': [{'start':10, 'stop':20}, {'start':30, 'stop':40}], '2': [{'start':90, 'stop':100}]}
+def arrangeResult(labels, time_spec_rate):
     lastLabel = labels[0]
     speakerSlice = {}
     j = 0
@@ -226,6 +197,8 @@ def append2dict(speakerSlice, spk_period):
     return speakerSlice
 
 
+# Convert to standard time format
+# minute:second.millisecond
 def fmtTime(timeInMillisecond):
     millisecond = timeInMillisecond % 1000
     minute = timeInMillisecond // 1000 // 60

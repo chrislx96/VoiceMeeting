@@ -23,8 +23,6 @@ from wave_factory import views
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # e.g wave_factory/uuid/
-    # url(r'^wave_factory/uuid=(?P<pk>[\w:|-]+)$', views.WaveFactoryView.as_view())
     path('wave_factory/', views.WaveFactoryView.as_view())
 ]
 

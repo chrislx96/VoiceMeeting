@@ -2,19 +2,31 @@ import okhttp3.*;
 
 import java.io.*;
 import java.util.Map;
+import java.util.UUID;
 
 public class AndroidHTTPUtils {
+    /**
+     * Http Post Method
+     * 
+     * @param url   String
+     * @param uuid  String 
+     * @param filename  String 
+     * @param filePath  String 
+     * @return  HttpResponse
+     * @throws IOException
+     */
     public HttpResponse doPost(String url, String uuid, String filename, String filePath) throws IOException {
-
-
+        // create a new client
         OkHttpClient client = new OkHttpClient();
 
+        // create request body
         RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("uuid", uuid)
                 .addFormDataPart("file", filename,
                         RequestBody.create(new File(filePath), MediaType.parse("audio/wav")))
                 .build();
 
+        // create post request
         Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
@@ -25,6 +37,13 @@ public class AndroidHTTPUtils {
         }
     }
 
+    /**
+     * Http Get Method
+     * 
+     * @param url String
+     * @return HttpResponse
+     * @throws IOException
+     */
     public HttpResponse doGet(String url) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).get().build();
@@ -34,6 +53,14 @@ public class AndroidHTTPUtils {
         }
     }
 
+
+    /**
+     * Http Delete Method
+     * 
+     * @param url String 
+     * @return HttpResponse
+     * @throws IOException
+     */
     public HttpResponse doDelete(String url) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).delete().build();
@@ -44,6 +71,10 @@ public class AndroidHTTPUtils {
 
     }
 
+    /**
+     * Nested Class
+     * Store response code, body
+     */
     public class HttpResponse {
         private int responseCode;
         private String responseBody;
@@ -62,21 +93,27 @@ public class AndroidHTTPUtils {
         }
     }
 
+    //==================================================================
+    // test functions
+    //==================================================================
     public static void main(String[] args) throws IOException {
-        String url = "http://45.113.235.106/wave_factory/";
-        String header = "";
-        String fileUUid = "3511qf-c682-4198-aef8-3449f7e89630";
-        String filePath = "output.wav";
-
-        AndroidHTTPUtils httpUtils = new AndroidHTTPUtils();
-        HttpResponse response = httpUtils.doPost(url, fileUUid, filePath, filePath);
-
+        String uuid = UUID.randomUUID().toString();
+        System.out.println(uuid);
+        System.out.println(uuid.length());
+//        String url = "http://43.112.235.106/wave_factory/";
+//        String header = "";
+//        String fileUUid = "3511qf-c682-4198-aef8-3449f7e89630";
+//        String filePath = "output.wav";
+//
+//        AndroidHTTPUtils httpUtils = new AndroidHTTPUtils();
+////        HttpResponse response = httpUtils.doPost(url, fileUUid, filePath, filePath);
+//
 //        url = url + "?uuid=" + fileUUid;
-//        HttpResponse response = httpUtils.doGet(url);
+////        HttpResponse response = httpUtils.doGet(url);
 //        HttpResponse response = httpUtils.doDelete(url);
-
-        System.out.println(response.getResponseCode());
-        System.out.println(response.getResponseBody());
+//
+//        System.out.println(response.getResponseCode());
+//        System.out.println(response.getResponseBody());
 
     }
 }

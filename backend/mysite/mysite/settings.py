@@ -24,7 +24,7 @@ SECRET_KEY = 'wz&j*mlwjjlbi*&u=)q3fo58tb-hii6mgna8-x3-)s*gv0ukla'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['104.197.180.173', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Application definition
 
@@ -38,7 +38,6 @@ INSTALLED_APPS = [
 
     # added
     'rest_framework',
-    'login',
     'wave_factory',
 ]
 
