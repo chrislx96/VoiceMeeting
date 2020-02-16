@@ -225,7 +225,6 @@ public class RecordingActivity extends AppCompatActivity {
 
 
     class SendFile implements Runnable {
-
         @Override
         public void run() {
             String serverUrl = "https://45.113.235.106/wave_factory/";
@@ -239,33 +238,18 @@ public class RecordingActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
         }
-
-
-
     }
 
-    class ReceiveFile implements Runnable {
 
+    class ReceiveFile implements Runnable {
         @Override
         public void run() {
             while(true){
                 String serverUrl = "https://45.113.235.106/wave_factory/?uuid=3511qf-c682-4198-aef8-3449f7e89630";
 //                String serverUrl = "https://reqres.in/api/users";
-
                 AndroidHTTPUtils httpUtils = new AndroidHTTPUtils();
-//                try {
-//                    AndroidHTTPUtils.HttpResponse response = httpUtils.doGet(serverUrl);
-//                    System.out.println(response.getResponseBody());
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
                 httpUtils.debug2();
-
-
-
             }
         }
     }

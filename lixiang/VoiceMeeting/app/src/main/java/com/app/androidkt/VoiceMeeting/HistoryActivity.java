@@ -22,12 +22,7 @@ public class HistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
-//        Intent intent = getIntent();
-//        if (intent != null) {
-//            startTime = intent.getFloatArrayExtra("time");
-//            System.out.println(startTime);
-//            utterences = intent.getStringArrayExtra("speech");
-//        }
+
         DataPasser myDP = (DataPasser) getApplication();
         startTime = myDP.getStartTime();
         utterences = myDP.getUtterences();
