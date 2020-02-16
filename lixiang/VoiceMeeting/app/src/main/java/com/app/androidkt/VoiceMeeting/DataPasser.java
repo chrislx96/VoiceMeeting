@@ -4,7 +4,7 @@ import android.app.Application;
 import java.util.ArrayList;
 
 public class DataPasser extends Application {
-    String currentResult;
+    String currentResult="";
     ArrayList<Float> startTime;
     ArrayList<String> utterences;
     String filePath;

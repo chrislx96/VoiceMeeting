@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,6 +33,7 @@ import static com.app.androidkt.VoiceMeeting.VoiceRecorder.filePath;
 
 public class RecordingActivity extends AppCompatActivity {
 
+    Button historyButton,resultButton,recordButton,stopButton;
     private static final int RECORD_REQUEST_CODE = 101;
     ArrayList<Float> startTime = new ArrayList<Float>();
     ArrayList<String> utterences = new ArrayList<String>();
@@ -81,10 +84,10 @@ public class RecordingActivity extends AppCompatActivity {
     }
 
     private void binder(){
-        Button historyButton = findViewById(R.id.recording_btn_history);
-        Button resultButton = findViewById(R.id.recording_btn_result);
-        Button recordButton = findViewById(R.id.recording_btn_start);
-        Button stopButton = findViewById(R.id.recording_btn_pause);
+        historyButton = findViewById(R.id.recording_btn_history);
+        resultButton = findViewById(R.id.recording_btn_result);
+        recordButton = findViewById(R.id.recording_btn_start);
+        stopButton = findViewById(R.id.recording_btn_pause);
         MyBtnClicker myBtnClicker = new MyBtnClicker();
         historyButton.setOnClickListener(myBtnClicker);
         resultButton.setOnClickListener(myBtnClicker);
@@ -125,20 +128,60 @@ public class RecordingActivity extends AppCompatActivity {
 
                     Thread ts = new Thread(new SendFile());
                     ts.start();
+                    Toast.makeText(RecordingActivity.this,"Audio uploading" , Toast.LENGTH_LONG).show();
+                    historyButton.setEnabled(false);
+                    resultButton.setEnabled(false);
+                    // sleep for 2s wait for upload
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(2000); // sleep 2s
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            RecordingActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    historyButton.setEnabled(true);
+                                    resultButton.setEnabled(true);
+                                }
+                            });
+                        }
+                    }).start();
 
                     break;
                 case R.id.recording_btn_result:
 //                    Thread rs = new Thread(new ReceiveFile());
 //                    rs.start();
+
+
                     ReceiveFile myReceiveFile = new ReceiveFile();
                     Thread thread = new Thread(myReceiveFile);
                     thread.start();
 
+
                     DataPasser myDP = (DataPasser) getApplication();
                     System.out.println("currentResult in myDP:" + myDP.getCurrentResult());
+                    Toast.makeText(RecordingActivity.this,"Audio processing, please wait" , Toast.LENGTH_LONG).show();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(5000); // sleep 2s
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            Intent intent1 = new Intent(RecordingActivity.this, ResultActivity.class);
+                            startActivity(intent1);
+                        }
+                    }).start();
 
                     break;
                 case R.id.recording_btn_history:
+
+
+
                     Intent intent = new Intent(RecordingActivity.this, HistoryActivity.class);
 //                    System.out.println(Arrays.toString(getStartTime().toArray()));
 //                    System.out.println(Arrays.toString(getUtterences().toArray()));
@@ -270,6 +313,7 @@ public class RecordingActivity extends AppCompatActivity {
                 result = httpUtils.doGet2(serverUrl);
                 System.out.println("return result:" + result);
                 myDP.setCurrentResult(result);
+                System.out.println("print myDp right after set: " + myDP.getCurrentResult() );
 
             }
             try {

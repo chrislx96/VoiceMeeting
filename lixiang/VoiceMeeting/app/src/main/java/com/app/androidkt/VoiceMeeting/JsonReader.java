@@ -4,10 +4,10 @@ import java.util.Hashtable;
 
 public class JsonReader {
 
-    public static Hashtable<Integer, long[]>  readJson(String result){
+    public static Hashtable<long[],Integer>  readJson(String result){
         String[] sentences = result.split(",");
         String[] temp = new String[sentences.length-1];
-        Hashtable<Integer, long[]> finalTimeline = new Hashtable<>();
+        Hashtable<long[],Integer> finalTimeline = new Hashtable<>();
         int numberOfSpeaker = temp.length;
         int i =-1;
         for (String sentence:sentences
@@ -31,12 +31,12 @@ public class JsonReader {
                 long[] startFinish = new long[2];
                 startFinish[0] = start;
                 startFinish[1] = end;
-                finalTimeline.put(speakerNo,startFinish);
-                System.out.println("Speaker "+speakerNo + " start from " + start + " and ends at " + end);
+                finalTimeline.put(startFinish,speakerNo);
+//                System.out.println("Speaker "+speakerNo + " start from " + start + " and ends at " + end);
             }
             speakerNo++;
         }
-        System.out.print("Total number of speakers: " + numberOfSpeaker);
+//        System.out.print("Total number of speakers: " + numberOfSpeaker);
         return finalTimeline;
     }
 

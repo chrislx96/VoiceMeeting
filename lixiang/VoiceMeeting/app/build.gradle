@@ -93,4 +93,6 @@ dependencies {
     compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.3.1'
 
     compile 'com.loopj.android:android-async-http:1.4.9'
+
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
 }

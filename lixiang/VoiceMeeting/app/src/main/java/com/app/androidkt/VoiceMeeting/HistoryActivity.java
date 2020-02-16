@@ -31,7 +31,7 @@ public class HistoryActivity extends AppCompatActivity {
         startTime = myDP.getStartTime();
         utterences = myDP.getUtterences();
         result = myDP.getCurrentResult();
-        Hashtable<Integer, long[]> finalTimeline = readJson(result);
+        Hashtable<long[],Integer> finalTimeline = readJson(result);
 
 
         // Create Timeline rows List
