@@ -50,6 +50,16 @@ public class HistoryActivity extends AppCompatActivity {
         ArrayList<TimelineRow> timelineRowsList = new ArrayList<>();
         int speakerName = 1;
 
+        Hashtable<Integer,Integer> picture = new Hashtable<>();
+        picture.put(1,R.drawable.butters);
+        picture.put(2,R.drawable.biggles);
+        picture.put(3,R.drawable.cop);
+        picture.put(4,R.drawable.marjorine);
+        picture.put(5,R.drawable.squirrel);
+        picture.put(6,R.drawable.hitler);
+        picture.put(7,R.drawable.cartman);
+
+
 
         for (int i =0; i<utterences.size();i++) {
             for (long [] startEnd:
@@ -60,7 +70,9 @@ public class HistoryActivity extends AppCompatActivity {
                     speakerName = finalTimeline.get(startEnd);
                 }
             }
-            addTimelibeRows(timelineRowsList, i, "Time: "+String.valueOf(startTime.get(i)) + " s", "Speaker "+speakerName+ ": "+utterences.get(i));
+
+            int pictureId = picture.get(speakerName);
+            addTimelibeRows(timelineRowsList, i, "Time: "+String.valueOf(startTime.get(i)) + " s", "Speaker "+speakerName+ ": "+utterences.get(i), pictureId);
         }
 
         // Create the Timeline Adapter
@@ -74,7 +86,7 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     // add timeline rows function
-    private void addTimelibeRows(ArrayList<TimelineRow> timelineRowsList, int id, String title, String content){
+    private void addTimelibeRows(ArrayList<TimelineRow> timelineRowsList, int id, String title, String content, int picId){
         // Create new timeline row (Row Id)
         TimelineRow myRow = new TimelineRow(id);
         // To set the row Date (optional)
@@ -84,7 +96,7 @@ public class HistoryActivity extends AppCompatActivity {
         // To set the row Description (optional)
         myRow.setDescription(content);
         // To set the row bitmap image (optional)
-        myRow.setImage(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
+        myRow.setImage(BitmapFactory.decodeResource(getResources(), picId));
         // To set row Below Line Color (optional)
         myRow.setBellowLineColor(Color.argb(255, 0, 0, 0));
         // To set row Below Line Size in dp (optional)
