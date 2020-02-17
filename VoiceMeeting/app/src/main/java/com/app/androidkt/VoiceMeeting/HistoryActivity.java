@@ -77,7 +77,6 @@ public class HistoryActivity extends AppCompatActivity {
     private void addTimelibeRows(ArrayList<TimelineRow> timelineRowsList, int id, String title, String content){
         // Create new timeline row (Row Id)
         TimelineRow myRow = new TimelineRow(id);
-
         // To set the row Date (optional)
 //        myRow.setDate(date);
         // To set the row Title (optional)
@@ -102,7 +101,6 @@ public class HistoryActivity extends AppCompatActivity {
         myRow.setTitleColor(Color.argb(255, 0, 0, 0));
         // To set row Description text color (optional)
         myRow.setDescriptionColor(Color.argb(255, 0, 0, 0));
-
         timelineRowsList.add(myRow);
     }
     private static boolean isThisUtterence(long[] startEnd, long startTime){

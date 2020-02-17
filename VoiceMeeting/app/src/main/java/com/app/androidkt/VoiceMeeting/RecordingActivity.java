@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,6 +46,7 @@ public class RecordingActivity extends AppCompatActivity {
     ListView listView;
     long start;
     private ArrayAdapter adapter;
+    private boolean isReceived = false;
     private final SpeechAPI.Listener mSpeechServiceListener =
             new SpeechAPI.Listener() {
                 @Override
@@ -103,7 +105,7 @@ public class RecordingActivity extends AppCompatActivity {
     private class MyBtnClicker implements View.OnClickListener{
         @Override
         public void onClick(View view) {
-            switch (view.getId()){
+            switch (view.getId()) {
                 case R.id.recording_btn_start:
                     final long startT = System.currentTimeMillis();
                     start = startT;
@@ -117,6 +119,8 @@ public class RecordingActivity extends AppCompatActivity {
                         makeRequest(Manifest.permission.RECORD_AUDIO);
                     }
                     speechAPI.addListener(mSpeechServiceListener);
+                    DataPasser myDP = (DataPasser) getApplication();
+                    myDP.setCurrentResult("");
                     break;
 
                 case R.id.recording_btn_pause:
@@ -128,7 +132,7 @@ public class RecordingActivity extends AppCompatActivity {
 
                     Thread ts = new Thread(new SendFile());
                     ts.start();
-                    Toast.makeText(RecordingActivity.this,"Audio uploading" , Toast.LENGTH_LONG).show();
+                    Toast.makeText(RecordingActivity.this, "Audio uploading", Toast.LENGTH_LONG).show();
                     historyButton.setEnabled(false);
                     resultButton.setEnabled(false);
                     // sleep for 2s wait for upload
@@ -136,7 +140,7 @@ public class RecordingActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             try {
-                                Thread.sleep(2000); // sleep 2s
+                                Thread.sleep(1000); // sleep 2s
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -154,29 +158,41 @@ public class RecordingActivity extends AppCompatActivity {
                 case R.id.recording_btn_result:
 //                    Thread rs = new Thread(new ReceiveFile());
 //                    rs.start();
+                    // start receive new file thread
+                    if(isReceived==false){
+                        ReceiveFile myReceiveFile = new ReceiveFile();
+                        Thread thread = new Thread(myReceiveFile);
+                        thread.start();
+                        isReceived =true;
+                    }
 
-
-                    ReceiveFile myReceiveFile = new ReceiveFile();
-                    Thread thread = new Thread(myReceiveFile);
-                    thread.start();
-
-
-                    DataPasser myDP = (DataPasser) getApplication();
-                    System.out.println("currentResult in myDP:" + myDP.getCurrentResult());
-                    Toast.makeText(RecordingActivity.this,"Audio processing, please wait" , Toast.LENGTH_LONG).show();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Thread.sleep(5000); // sleep 2s
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                    myDP = (DataPasser) getApplication();
+                    if ("null".equals(myDP.getCurrentResult())||
+                            "".equals(myDP.getCurrentResult())||
+                            ":\"null\"}".equals(myDP.getCurrentResult().split("\"result\"")[1])) {
+                        Toast.makeText(RecordingActivity.this, "Audio processing, please try again later", Toast.LENGTH_LONG).show();
+                    }else{
+                        System.out.println("currentResult in myDP:" + myDP.getCurrentResult());
+                        System.out.println("test result after split:" + myDP.getCurrentResult().split("\"result\"")[1]);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(500); // sleep 2s
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                Intent intent1 = new Intent(RecordingActivity.this, ResultActivity.class);
+                                startActivity(intent1);
                             }
-                            Intent intent1 = new Intent(RecordingActivity.this, ResultActivity.class);
-                            startActivity(intent1);
-                        }
-                    }).start();
+                        }).start();
 
+                        // delete file on backend
+                        DeleteFile myDeleteFile = new DeleteFile();
+                        Thread thread_delete = new Thread(myDeleteFile);
+                        thread_delete.start();
+                        isReceived = false;
+                    }
                     break;
                 case R.id.recording_btn_history:
 
@@ -307,15 +323,40 @@ public class RecordingActivity extends AppCompatActivity {
             System.out.println(serverUrl);
             AndroidHTTPUtils httpUtils = new AndroidHTTPUtils();
 
-            while("".equals(result) || "fail".equals(result) || "null".equals(result)){
+            while("".equals(result)
+                    || "fail".equals(result)
+                    || "null".equals(result)
+                    || ":\"null\"}".equals(result.split("\"result\"")[1])){
 
                 //String serverUrl = "https://reqres.in/api/users";
                 result = httpUtils.doGet2(serverUrl);
                 System.out.println("return result:" + result);
-                myDP.setCurrentResult(result);
-                System.out.println("print myDp right after set: " + myDP.getCurrentResult() );
-
             }
+            myDP.setCurrentResult(result);
+            System.out.println("print myDp right after set: " + myDP.getCurrentResult() );
+        }
+        public String getResult(){
+                return result;
+        }
+    }
+
+
+    class DeleteFile implements Runnable {
+        private volatile String result = "";
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(50000); // sleep 2s
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            String serverUrl = "http://45.113.235.106/wave_factory/?uuid=";
+            DataPasser myDP = (DataPasser) getApplication();
+            String fileUUid = myDP.getUuid();
+            serverUrl +=fileUUid;
+            System.out.println(serverUrl);
+            AndroidHTTPUtils httpUtils = new AndroidHTTPUtils();
+
             try {
                 httpUtils.doDelete(serverUrl);
             } catch (IOException e) {
@@ -323,7 +364,7 @@ public class RecordingActivity extends AppCompatActivity {
             }
         }
         public String getResult(){
-                return result;
+            return result;
         }
     }
 }
