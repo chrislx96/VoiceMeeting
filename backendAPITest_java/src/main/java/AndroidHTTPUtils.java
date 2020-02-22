@@ -7,12 +7,12 @@ import java.util.UUID;
 public class AndroidHTTPUtils {
     /**
      * Http Post Method
-     * 
-     * @param url   String
-     * @param uuid  String 
-     * @param filename  String 
-     * @param filePath  String 
-     * @return  HttpResponse
+     *
+     * @param url      String
+     * @param uuid     String
+     * @param filename String
+     * @param filePath String
+     * @return HttpResponse
      * @throws IOException
      */
     public HttpResponse doPost(String url, String uuid, String filename, String filePath) throws IOException {
@@ -39,7 +39,7 @@ public class AndroidHTTPUtils {
 
     /**
      * Http Get Method
-     * 
+     *
      * @param url String
      * @return HttpResponse
      * @throws IOException
@@ -56,8 +56,8 @@ public class AndroidHTTPUtils {
 
     /**
      * Http Delete Method
-     * 
-     * @param url String 
+     *
+     * @param url String
      * @return HttpResponse
      * @throws IOException
      */
@@ -96,24 +96,25 @@ public class AndroidHTTPUtils {
     //==================================================================
     // test functions
     //==================================================================
-    public static void main(String[] args) throws IOException {
-        String uuid = UUID.randomUUID().toString();
-        System.out.println(uuid);
-        System.out.println(uuid.length());
+//    public static void main(String[] args) throws IOException {
+//        String uuid = UUID.randomUUID().toString();
+//        System.out.println(uuid);
+//        System.out.println(uuid.length());
+
 //        String url = "http://43.112.235.106/wave_factory/";
 //        String header = "";
-//        String fileUUid = "3511qf-c682-4198-aef8-3449f7e89630";
+//        String fileUUid = "59d619c5-f314-4204-bb13-adb81f7d7ef7";
 //        String filePath = "output.wav";
-//
+
 //        AndroidHTTPUtils httpUtils = new AndroidHTTPUtils();
-////        HttpResponse response = httpUtils.doPost(url, fileUUid, filePath, filePath);
-//
+//        HttpResponse response = httpUtils.doPost(url, fleUUid, filePath, filePath);
+
 //        url = url + "?uuid=" + fileUUid;
-////        HttpResponse response = httpUtils.doGet(url);
+//        HttpResponse response = httpUtils.doGet(url);
 //        HttpResponse response = httpUtils.doDelete(url);
 //
 //        System.out.println(response.getResponseCode());
 //        System.out.println(response.getResponseBody());
 
-    }
+//    }
 }
