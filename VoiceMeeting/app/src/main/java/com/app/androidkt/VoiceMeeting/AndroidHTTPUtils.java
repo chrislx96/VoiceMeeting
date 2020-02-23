@@ -1,20 +1,21 @@
 package com.app.androidkt.VoiceMeeting;
 
 import okhttp3.*;
-
 import java.io.*;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class AndroidHTTPUtils {
+class AndroidHTTPUtils {
 
+    // Post method to send the file through http using server url. Also, file name and file uuid are
+    // specified.
+    HttpResponse doPost(String url, String uuid, String filename, String filePath) throws IOException {
 
-    public HttpResponse doPost(String url, String uuid, String filename, String filePath) throws IOException {
-
-
+        // Create a http client and set the time out to be 30 seconds because the audio file can be
+        // very large.
         OkHttpClient client = new OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS).
                 writeTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
+        // Specify the uuid and file name to let the server know.
         RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("uuid", uuid)
                 .addFormDataPart("file", filename,
@@ -31,20 +32,11 @@ public class AndroidHTTPUtils {
         }
     }
 
-    public HttpResponse doGet(String url) throws IOException {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url(url).get().build();
-
-        try (Response response = client.newCall(request).execute()) {
-            return new HttpResponse(response);
-        }
-
-    }
-
-    public String doGet2(String url){
+    // Get method
+    String doGet(String url){
         OkHttpClient client = new OkHttpClient();
 
-        // synch result class
+        // Create an instance of sync result class
         final SyncResult syncResult = new SyncResult();
 
         final Request request = new Request.Builder().url(url).build();
@@ -54,11 +46,12 @@ public class AndroidHTTPUtils {
                 e.printStackTrace();
             }
 
+            // If the server is ready and has sent the response to the client, the method will call
+            // set result method from sync result class to pass the result to the ResultActivity.
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.isSuccessful()){
                     String myResponse = response.body().string();
-                    System.out.println("http receive:" + myResponse);
                     syncResult.setResult(myResponse);
                 }
             }
@@ -66,7 +59,9 @@ public class AndroidHTTPUtils {
         return syncResult.getResult();
     }
 
-    public HttpResponse doDelete(String url) throws IOException {
+    // When the client get the response, it will send the doDelete request to the server, the server
+    // will delete the specified file to save the storage space.
+    HttpResponse doDelete(String url) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).delete().build();
 
@@ -76,39 +71,19 @@ public class AndroidHTTPUtils {
 
     }
 
-    public class HttpResponse {
+    // HttpResponse class is created to help get the message body
+    class HttpResponse {
         private int responseCode;
         private String responseBody;
 
-        public HttpResponse(Response response) throws IOException {
+        HttpResponse(Response response) throws IOException {
             responseCode = response.code();
             responseBody = response.body().string();
         }
 
-        public int getResponseCode() {
-            return responseCode;
-        }
-
-        public String getResponseBody() {
+        String getResponseBody() {
             return responseBody;
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        String url = "http://45.113.235.106/wave_factory/";
-        String header = "";
-        String fileUUid = "3511qf-c682-4198-aef8-3449f7e89630";
-        String filePath = "output.wav";
-
-        AndroidHTTPUtils httpUtils = new AndroidHTTPUtils();
-        HttpResponse response = httpUtils.doPost(url, fileUUid, filePath, filePath);
-
-//        url = url + "?uuid=" + fileUUid;
-//        HttpResponse response = httpUtils.doGet(url);
-//        HttpResponse response = httpUtils.doDelete(url);
-
-        System.out.println(response.getResponseCode());
-        System.out.println(response.getResponseBody());
-
-    }
 }

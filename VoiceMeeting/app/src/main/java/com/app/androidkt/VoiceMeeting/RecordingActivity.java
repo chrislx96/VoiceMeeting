@@ -329,11 +329,9 @@ public class RecordingActivity extends AppCompatActivity {
                     || ":\"null\"}".equals(result.split("\"result\"")[1])){
 
                 //String serverUrl = "https://reqres.in/api/users";
-                result = httpUtils.doGet2(serverUrl);
-                System.out.println("return result:" + result);
+                result = httpUtils.doGet(serverUrl);
             }
             myDP.setCurrentResult(result);
-            System.out.println("print myDp right after set: " + myDP.getCurrentResult() );
         }
         public String getResult(){
                 return result;

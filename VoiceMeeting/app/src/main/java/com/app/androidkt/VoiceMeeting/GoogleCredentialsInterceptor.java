@@ -1,13 +1,11 @@
 package com.app.androidkt.VoiceMeeting;
 
 import com.google.auth.Credentials;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
-
 import io.grpc.CallOptions;
 import io.grpc.Channel;
 import io.grpc.ClientCall;
@@ -18,16 +16,12 @@ import io.grpc.MethodDescriptor;
 import io.grpc.Status;
 import io.grpc.StatusException;
 
-/**
- * Created by brijesh on 22/7/17.
- */
+// Reference source: https://github.com/Thumar/SpeechAPI/blob/master/app/src/main/java/com/app/androidkt/speechapi/GoogleCredentialsInterceptor.java
 
 public class GoogleCredentialsInterceptor implements ClientInterceptor {
 
     private final Credentials mCredentials;
-
     private Metadata mCached;
-
     private Map<String, List<String>> mLastMetadata;
 
     GoogleCredentialsInterceptor(Credentials credentials) {
@@ -57,11 +51,11 @@ public class GoogleCredentialsInterceptor implements ClientInterceptor {
         };
     }
 
-    /**
-     * Generate a JWT-specific service URI. The URI is simply an identifier with enough
-     * information for a service to know that the JWT was intended for it. The URI will
-     * commonly be verified with a simple string equality check.
-     */
+
+    // Generate a JWT-specific service URI. The URI is simply an identifier with enough information
+    // for a service to know that the JWT was intended for it. The URI will commonly be verified
+    // with a simple string equality check.
+
     private URI serviceUri(Channel channel, MethodDescriptor<?, ?> method)
             throws StatusException {
         String authority = channel.authority();
@@ -70,7 +64,7 @@ public class GoogleCredentialsInterceptor implements ClientInterceptor {
                     .withDescription("Channel has no authority")
                     .asException();
         }
-        // Always use HTTPS, by definition.
+        // Use HTTPS.
         final String scheme = "https";
         final int defaultPort = 443;
         String path = "/" + MethodDescriptor.extractFullServiceName(method.getFullMethodName());
@@ -82,7 +76,7 @@ public class GoogleCredentialsInterceptor implements ClientInterceptor {
                     .withDescription("Unable to construct service URI for auth")
                     .withCause(e).asException();
         }
-        // The default port must not be present. Alternative ports should be present.
+        // The default port must not be present.
         if (uri.getPort() == defaultPort) {
             uri = removePort(uri);
         }

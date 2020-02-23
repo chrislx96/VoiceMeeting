@@ -1,20 +1,15 @@
 package com.app.androidkt.VoiceMeeting;
 
-import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import org.qap.ctimelineview.TimelineRow;
 import org.qap.ctimelineview.TimelineViewAdapter;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Hashtable;
-
 import static com.app.androidkt.VoiceMeeting.JsonReader.readJson;
 
 public class HistoryActivity extends AppCompatActivity {
@@ -26,24 +21,11 @@ public class HistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
-
         DataPasser myDP = (DataPasser) getApplication();
         startTime = myDP.getStartTime();
         utterences = myDP.getUtterences();
         result = myDP.getCurrentResult();
         Hashtable<long[],Integer> finalTimeline = readJson(result);
-
-        for (long[] startEnd:
-                finalTimeline.keySet()) {
-            long start = startEnd[0];
-            long end = startEnd[1];
-            System.out.println(start);
-            System.out.println(end);
-
-
-        }
-
-
 
 
         // Create Timeline rows List
@@ -58,9 +40,7 @@ public class HistoryActivity extends AppCompatActivity {
         picture.put(5,R.drawable.squirrel);
         picture.put(6,R.drawable.hitler);
         picture.put(7,R.drawable.cartman);
-
-
-
+        
         for (int i =0; i<utterences.size();i++) {
             for (long [] startEnd:
                  finalTimeline.keySet()) {
