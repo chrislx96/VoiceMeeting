@@ -2,6 +2,7 @@ package com.app.androidkt.VoiceMeeting;
 
 import java.util.Hashtable;
 
+// This class help to decode the json result got from the server.
 public class JsonReader {
 
     public static Hashtable<long[],Integer>  readJson(String result){
@@ -26,23 +27,21 @@ public class JsonReader {
             for (String times:
                     timeline) {
                 String[] startEnd = times.split("==>");
+                // Get the start and finish time of each speaker.
                 long start = timeConverter(startEnd[0]);
                 long end = timeConverter(startEnd[1]);
                 long[] startFinish = new long[2];
                 startFinish[0] = start;
                 startFinish[1] = end;
+                // Add the speaker Id to the start time and finish time of each speech
                 finalTimeline.put(startFinish,speakerNo);
-//                System.out.println("Speaker "+speakerNo + " start from " + start + " and ends at " + end);
             }
             speakerNo++;
         }
-//        System.out.print("Total number of speakers: " + numberOfSpeaker);
         return finalTimeline;
     }
 
-
-    // String result = "{\"uuid\":\"3511qf-c682-4198-aef8-3449f7e89630\",\"result\":\"{\\\"0\\\": \\\"0:01.24==>0:05.100;0:09.616==>0:10.180\\\", \\\"1\\\": \\\"0:05.100==>0:09.616;0:10.180==>0:12.0\\\"}\"}";
-
+    // Convert the time format of the server to milliseconds.
     private static long timeConverter(String time){
         long min;
         long sec;

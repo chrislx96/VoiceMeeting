@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -37,7 +36,6 @@ public class RegisterActivity extends Activity{
         mPhone = findViewById(R.id.register_edit_phone);
         mRegisterBtn = findViewById(R.id.register_btn_register);
         mLoginBtn = findViewById(R.id.register_tv_login);
-
         fAuth = FirebaseAuth.getInstance();
         progressBar = findViewById(R.id.progressBar);
 
@@ -52,14 +50,17 @@ public class RegisterActivity extends Activity{
                 String email = mEmail.getText().toString().trim();
                 String password = mPassword.getText().toString().trim();
 
+                // check if the email is null
                 if(TextUtils.isEmpty(email)){
                     mEmail.setError("Email is required.");
                 }
 
+                // check if the password is null
                 if(TextUtils.isEmpty(password)){
                     mPassword.setError("Password is required.");
                 }
 
+                // password should have at least 6 characters
                 if(password.length() < 0){
                     mPassword.setError("Password must be more than 6 characters");
                 }
@@ -80,17 +81,12 @@ public class RegisterActivity extends Activity{
                 });
             }
         });
-
+        // if the registration completes, then guide the user to the login page.
         mLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
             }
         });
-
-
-
-
-
     }
 }

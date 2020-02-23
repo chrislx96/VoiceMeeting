@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
-
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.speech.v1.RecognitionConfig;
@@ -17,7 +16,6 @@ import com.google.cloud.speech.v1.StreamingRecognitionResult;
 import com.google.cloud.speech.v1.StreamingRecognizeRequest;
 import com.google.cloud.speech.v1.StreamingRecognizeResponse;
 import com.google.protobuf.ByteString;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -25,39 +23,29 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import io.grpc.ManagedChannel;
 import io.grpc.internal.DnsNameResolverProvider;
 import io.grpc.okhttp.OkHttpChannelProvider;
 import io.grpc.stub.StreamObserver;
 
 
+// This class uses the Google api to perform the speech to text task.
+// Reference source: https://github.com/Thumar/SpeechAPI/blob/master/app/src/main/java/com/app/androidkt/speechapi/SpeechAPI.java
 public class SpeechAPI {
 
     public static final List<String> SCOPE = Collections.singletonList("https://www.googleapis.com/auth/cloud-platform");
     public static final String TAG = "SpeechAPI";
-
     private static final String PREFS = "SpeechService";
     private static final String PREF_ACCESS_TOKEN_VALUE = "access_token_value";
     private static final String PREF_ACCESS_TOKEN_EXPIRATION_TIME = "access_token_expiration_time";
-
-    /**
-     * We reuse an access token if its expiration time is longer than this.
-     */
+    // Reuse an access token if its expiration time is longer than this.
     private static final int ACCESS_TOKEN_EXPIRATION_TOLERANCE = 30 * 60 * 1000; // thirty minutes
-
-    /**
-     * We refresh the current access token before it expires.
-     */
+    // refresh the current access token before it expires.
     private static final int ACCESS_TOKEN_FETCH_MARGIN = 60 * 1000; // one minute
-
     private static final String HOSTNAME = "speech.googleapis.com";
     private static final int PORT = 443;
     private static Handler mHandler;
-
-    //private final SpeechBinder mBinder = new SpeechBinder();
     private final ArrayList<Listener> mListeners = new ArrayList<>();
-
     private final StreamObserver<StreamingRecognizeResponse> mResponseObserver = new StreamObserver<StreamingRecognizeResponse>() {
         @Override
         public void onNext(StreamingRecognizeResponse response) {
@@ -140,11 +128,7 @@ public class SpeechAPI {
         mListeners.remove(listener);
     }
 
-    /**
-     * Starts recognizing speech audio.
-     *
-     * @param sampleRate The sample rate of the audio.
-     */
+    // Starts recognizing speech audio.
     public void startRecognizing(int sampleRate) {
         if (mApi == null) {
             Log.w(TAG, "API not ready. Ignoring the request.");
@@ -169,13 +153,8 @@ public class SpeechAPI {
         mRequestObserver.onNext(streamingRecognizeRequest);
     }
 
-    /**
-     * Recognizes the speech audio. This method should be called every time a chunk of byte buffer
-     * is ready.
-     *
-     * @param data The audio data.
-     * @param size The number of elements that are actually relevant in the {@code data}.
-     */
+    // Recognizes the speech audio. This method should be called every time a chunk of byte buffer
+    // is ready.
     public void recognize(byte[] data, int size) {
         if (mRequestObserver == null) {
             return;
@@ -186,9 +165,7 @@ public class SpeechAPI {
                 .build());
     }
 
-    /**
-     * Finishes recognizing speech audio.
-     */
+    // Finishes recognizing speech audio.
     public void finishRecognizing() {
         if (mRequestObserver == null) {
             return;
@@ -203,21 +180,17 @@ public class SpeechAPI {
     }
 
     private class AccessTokenTask extends AsyncTask<Void, Void, AccessToken> {
-
         @Override
         protected AccessToken doInBackground(Void... voids) {
-
             final SharedPreferences prefs = mContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
             String tokenValue = prefs.getString(PREF_ACCESS_TOKEN_VALUE, null);
             long expirationTime = prefs.getLong(PREF_ACCESS_TOKEN_EXPIRATION_TIME, -1);
-
             // Check if the current token is still valid for a while
             if (tokenValue != null && expirationTime > 0) {
                 if (expirationTime > System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_TOLERANCE) {
                     return new AccessToken(tokenValue, new Date(expirationTime));
                 }
             }
-
             final InputStream stream = mContext.getResources().openRawResource(R.raw.credential);
             try {
                 final GoogleCredentials credentials = GoogleCredentials.fromStream(stream).createScoped(SCOPE);
@@ -243,7 +216,6 @@ public class SpeechAPI {
                             .createScoped(SCOPE)))
                     .build();
             mApi = SpeechGrpc.newStub(channel);
-
             // Schedule access token refresh before it expires
             if (mHandler != null) {
                 mHandler.postDelayed(mFetchAccessTokenRunnable,

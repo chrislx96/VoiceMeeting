@@ -2,23 +2,21 @@ package com.app.androidkt.VoiceMeeting;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+// Login uses the Google API. This class just shows the logic of login on the client side.
 public class LoginActivity extends Activity {
 
     private EditText mEmail, mPassword;
@@ -26,7 +24,6 @@ public class LoginActivity extends Activity {
     private TextView mCreateBtn;
     private ProgressBar mProgressBar;
     FirebaseAuth fAuth;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,15 +42,15 @@ public class LoginActivity extends Activity {
             public void onClick(View view) {
                 String email = mEmail.getText().toString().trim();
                 String password = mPassword.getText().toString().trim();
-
+                // Check if the email is typed in.
                 if(TextUtils.isEmpty(email)){
                     mEmail.setError("Email is required.");
                 }
-
+                // Check if the password is typed in.
                 if(TextUtils.isEmpty(password)){
                     mPassword.setError("Password is required.");
                 }
-
+                // Check if the password is more than 6 characters.
                 if(password.length() < 0){
                     mPassword.setError("Password must be more than 6 characters");
                 }
@@ -74,15 +71,13 @@ public class LoginActivity extends Activity {
                 });
             }
         });
-
+        // If the user have not registered yet, guide him/her to the registration page.
         mCreateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(),RegisterActivity.class  ));
             }
         });
-
-
 
     }
 }

@@ -12,6 +12,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+// This class record the audio to send to the google for speech recognition. It also saves the audio file
+// into the wav file and upload the audio file to the server for further diarization.
+// reference source: https://github.com/Thumar/SpeechAPI/blob/master/app/src/main/java/com/app/androidkt/speechapi/VoiceRecorder.java
 public class VoiceRecorder {
 
     private static final int[] SAMPLE_RATE_CANDIDATES = new int[]{44100};
@@ -35,7 +38,6 @@ public class VoiceRecorder {
     private AudioRecord mAudioRecord;
     private Thread mThread;
     private byte[] mBuffer;
-
 
     public static abstract class Callback {
         //Called when the recorder starts hearing voice
@@ -97,7 +99,7 @@ public class VoiceRecorder {
         }
     }
 
-    //Dismisses the currently ongoing utterance
+    // Dismisses the currently ongoing utterance
     void dismiss() {
         if (mLastVoiceHeardMillis != Long.MAX_VALUE) {
             mLastVoiceHeardMillis = Long.MAX_VALUE;
@@ -105,7 +107,7 @@ public class VoiceRecorder {
         }
     }
 
-    //Retrieves the sample rate currently used to record audio
+    // Retrieves the sample rate currently used to record audio
     int getSampleRate() {
         if (mAudioRecord != null) {
             return mAudioRecord.getSampleRate();
@@ -113,7 +115,7 @@ public class VoiceRecorder {
         return 0;
     }
 
-    //Creates a new AudioRecord
+    // Creates a new AudioRecord
     private AudioRecord createAudioRecord() {
         for (int sampleRate : SAMPLE_RATE_CANDIDATES) {
             final int sizeInBytes = AudioRecord.getMinBufferSize(sampleRate, CHANNEL, ENCODING);
@@ -132,7 +134,7 @@ public class VoiceRecorder {
         return null;
     }
 
-    //Continuously processes the captured audio and notifies {@link #mCallback} of corresponding events
+    // Continuously processes the captured audio and notifies {@link #mCallback} of corresponding events
     private class ProcessVoice implements Runnable {
         @Override
         public void run() {
@@ -193,10 +195,12 @@ public class VoiceRecorder {
 
     }
 
+    // get the name of the output file
     private String getFilename() {
         return getPath(System.currentTimeMillis()+ "audio.wav");
     }
 
+    // get the name of the temporary pcm file
     private String getTempFilename() {
         String filepath = Environment.getExternalStorageDirectory().getPath();
         File file = new File(filepath, AUDIO_RECORDER_FOLDER);
@@ -210,6 +214,7 @@ public class VoiceRecorder {
         return (file.getAbsolutePath() + "/" + AUDIO_RECORDER_TEMP_FILE);
     }
 
+    // get the directory of the output file
     private String getPath(String nameOfFile) {
         File file = new File(getFileDirectory());
         file.mkdirs();
@@ -217,15 +222,18 @@ public class VoiceRecorder {
         return pathName;
     }
 
+    // get the output file directory on the mobile phone
     private String getFileDirectory(){
         return (Environment.getExternalStorageDirectory().getAbsolutePath() + "/SpkDiarization/");
     }
 
+    // delete the temporary pcm file
     private void deleteTempFile() {
         File file = new File(getTempFilename());
         file.delete();
     }
 
+    // turn the temporary file which was pcm into wav file.
     private void copyWaveFile(String inFilename, String outFilename) {
         FileInputStream in;
         FileOutputStream out;
@@ -254,6 +262,7 @@ public class VoiceRecorder {
         }
     }
 
+    // write the header of the wav file
     private void WriteWaveFileHeader(FileOutputStream out, long totalAudioLen,
                                      long totalDataLen, long longSampleRate, int channels, long byteRate)
             throws IOException {
