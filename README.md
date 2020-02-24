@@ -23,7 +23,7 @@
     This part is to test backend api with Java, which are used in Android application.
 
 * [<font size=4>Application</font>](#app) <br>
-    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    This application is designed for users to perform speaker diarization in a meeting. It provide the diarization result in a pie chart as well as a timeline.
 
 
 <br>
