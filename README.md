@@ -83,8 +83,9 @@ Dependencies:
 
 ## Qucik Start
 1. Enable Google platform Speech-to-text api with the instruction https://cloud.google.com/speech-to-text/docs
-2. Download the authentication Json file and paste into directory ..\VoiceMeeting\VoiceMeeting\app\src\main\res\raw 
-3. Run the app
+2. Download the authentication Json file 
+3. paste into directory ..\VoiceMeeting\VoiceMeeting\app\src\main\res\raw 
+4. Run the app
 
 
 # Model Reference
