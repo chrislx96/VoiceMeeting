@@ -81,9 +81,24 @@ Dependencies:
 
 # <span id="app"> Application </span>
 
+## Qucik Start
+1. Enable Google platform Speech-to-text api with the instruction https://cloud.google.com/speech-to-text/docs
+2. Download the authentication Json file and paste into directory ..\VoiceMeeting\VoiceMeeting\app\src\main\res\raw 
+3. Run the app
+
+
 # Model Reference
 * https://github.com/WeidiXie/VGG-Speaker-Recognition
 * https://github.com/google/uis-rnn
 * https://github.com/taylorlu/Speaker-Diarization
+* https://github.com/Thumar/SpeechAPI
+* https://github.com/taylorlu/Speaker-Diarization
+* https://github.com/qapqap/TimelineView
+* https://github.com/PhilJay/MPAndroidChart
 
 # Contributing 
+1. Fork it
+2. Create your feature branch: git checkout -b -your improvement
+3. Make your own change and test
+4. Commit and push your changes
+5. Submit a pull request
